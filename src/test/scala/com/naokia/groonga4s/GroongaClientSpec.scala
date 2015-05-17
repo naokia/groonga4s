@@ -4,9 +4,6 @@ import com.naokia.groonga4s.command.SelectParameters
 import com.naokia.groonga4s.response.SelectResponse
 import org.specs2.mutable.Specification
 
-import play.api.libs.json
-import play.api.libs.json.Json
-
 /**
  * Created by naoki on 15/04/29.
  */

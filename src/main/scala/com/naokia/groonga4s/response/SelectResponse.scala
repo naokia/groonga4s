@@ -10,13 +10,13 @@ import collection.JavaConversions._
 /**
  * Created by naoki on 15/04/29.
  */
-case class SelectResponse[T](returnCode: Int, processStarted: Double, processingTimes: Double, hits: Int, items: Seq[Map[String, Any]]) extends Response
+case class SelectResponse(returnCode: Int, processStarted: Double, processingTimes: Double, hits: Int, items: Seq[Map[String, Any]]) extends Response
 
-class SelectResponseParser[T] extends ResponseParser{
+class SelectResponseParser extends ResponseParser{
   val mapper = new ObjectMapper
   mapper.registerModule(DefaultScalaModule)
 
-  def parse(jsonStr: String): Try[SelectResponse[T]] = Try{
+  def parse(jsonStr: String): SelectResponse = {
     val rootNode = mapper.readValue(jsonStr, classOf[JsonNode])
 
     val returnCode = rootNode.get(0).get(0).asInt
@@ -35,7 +35,7 @@ class SelectResponseParser[T] extends ResponseParser{
     }
 
     //TODO: Drilldownを出力している時と処理分ける
-    SelectResponse[T](returnCode, processStarted, processingTimes, hits, entityList)
+    SelectResponse(returnCode, processStarted, processingTimes, hits, entityList)
   }
 
   private def collectColumnNames(columnListWithType: List[List[String]]):List[String] = {
