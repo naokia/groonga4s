@@ -10,7 +10,7 @@ import collection.JavaConversions._
 /**
  * Created by naoki on 15/04/29.
  */
-case class SelectResponse(returnCode: Int, processStarted: Double, processingTimes: Double, hits: Int, items: Seq[Map[String, Any]]) extends Response
+case class SelectResponse(returnCode: Int, processStarted: Double, processingTimes: Double, hits: Int, items: Seq[Map[String, Any]], drilldowns: Seq[Map[Any,Any]]=Seq()) extends Response
 
 class SelectResponseParser extends ResponseParser{
   val mapper = new ObjectMapper
@@ -33,15 +33,9 @@ class SelectResponseParser extends ResponseParser{
     } else{
       Seq()
     }
+    val drilldowns = if(rootNode.get(1).elements().size > 1) parseDrilldowns(rootNode.get(1).elements()) else Seq()
 
-    //TODO: Drilldownを出力している時と処理分ける
-    SelectResponse(returnCode, processStarted, processingTimes, hits, entityList)
-  }
-
-  private def collectColumnNames(columnListWithType: List[List[String]]):List[String] = {
-    columnListWithType map{ columnWithType =>
-      columnWithType(0)
-    }
+    SelectResponse(returnCode, processStarted, processingTimes, hits, entityList, drilldowns)
   }
 
   private def array2Map(origRowList: Seq[Any], columnNameList: Seq[String]): Seq[Map[String, Any]] = {
@@ -50,5 +44,15 @@ class SelectResponseParser extends ResponseParser{
         Map(columnNameList(i) -> JacksonColumnConverter.convert(column))
       }.reduce((a, b) => a ++ b)
     }
+  }
+
+  private def parseDrilldowns(nodeList: Iterator[JsonNode]): Seq[Map[Any,Any]] = {
+    nodeList.drop(1).map { drillDownList =>
+      drillDownList.drop(2).map { valueList =>
+        val key = JacksonColumnConverter.convert(valueList.get(0))
+        val value = JacksonColumnConverter.convert(valueList.get(1))
+        Map(key -> value)
+      }.reduce((a, b) => a ++ b)
+    }.toSeq
   }
 }

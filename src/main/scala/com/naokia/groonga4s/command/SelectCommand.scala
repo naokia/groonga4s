@@ -14,7 +14,6 @@ case class SelectParameters(
   limit: Option[Int]=None,
   drilldown: Seq[String]=Seq(),
   drilldownSortby: Seq[String]=Seq(),
-  drilldownOutputColumns: Seq[String]=Seq(),
   drilldownOffset: Option[Int]=None,
   drilldownLimit: Option[Int]=None,
   cache: Option[Boolean]=None,

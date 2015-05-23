@@ -13,7 +13,6 @@ class LoadCommandSpec extends Specification{
     }
     "must execute load command to Groonga (with ifexists parameter)" >>{
       val command = new LoadCommand("[[\"_key\", \"name\"], [\"1\", \"john\"]]", "Entities", List("name", "age"), Some("true"))
-      print(command.stringify)
       command.stringify must equalTo("/d/load?values=[[\"_key\", \"name\"], [\"1\", \"john\"]]&table=Entities&columns=name,age&ifexists=true")
     }
   }

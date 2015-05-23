@@ -33,7 +33,7 @@ class GroongaClient(uri: String) extends Client {
     val httpResponse = httpClient.execute(httpGet)
     httpResponse.getStatusLine.getStatusCode match {
       case status if status == 200 => new SelectResponseParser().parse(EntityUtils.toString(httpResponse.getEntity, "UTF-8"))
-      case status if status != 200 => throw new Exception("statuscode: " + status) //TODO 適切なExceptionを。
+      case status if status != 200 => throw new Exception("statuscode: " + status) //TODO
     }
   }
 }
