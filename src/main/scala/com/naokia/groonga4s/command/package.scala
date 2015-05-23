@@ -7,7 +7,7 @@ package object command {
   trait Command extends URLParts{
   }
 
-  trait Parameters extends URLParts{
+  trait Parameters{
   }
 
   trait URLParts {

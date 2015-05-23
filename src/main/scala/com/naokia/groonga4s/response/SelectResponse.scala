@@ -42,7 +42,7 @@ class SelectResponseParser extends ResponseParser{
     origRowList map { origRow =>
       origRow.asInstanceOf[ArrayNode].toList.zipWithIndex.map { case (column, i) =>
         Map(columnNameList(i) -> JacksonColumnConverter.convert(column))
-      }.reduce((a, b) => a ++ b)
+      }.reduce((c1, c2) => c1 ++ c2)
     }
   }
 
@@ -52,7 +52,7 @@ class SelectResponseParser extends ResponseParser{
         val key = JacksonColumnConverter.convert(valueList.get(0))
         val value = JacksonColumnConverter.convert(valueList.get(1))
         Map(key -> value)
-      }.reduce((a, b) => a ++ b)
+      }.reduce((v1, v2) => v1 ++ v2)
     }.toSeq
   }
 }
