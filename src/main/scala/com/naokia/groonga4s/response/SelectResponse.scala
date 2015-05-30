@@ -12,7 +12,7 @@ import collection.JavaConversions._
  */
 case class SelectResponse(returnCode: Int, processStarted: Double, processingTimes: Double, hits: Int, items: Seq[Map[String, Any]], drilldowns: Seq[Map[Any,Any]]=Seq()) extends Response
 
-class SelectResponseParser extends ResponseParser{
+class SelectResponseParser extends ResponseParser[SelectResponse]{
   val mapper = new ObjectMapper
   mapper.registerModule(DefaultScalaModule)
 

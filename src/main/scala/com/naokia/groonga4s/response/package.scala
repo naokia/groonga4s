@@ -8,7 +8,7 @@ package object response {
 
   }
 
-  trait ResponseParser {
-
+  trait ResponseParser[T <: Response] {
+    def parse(jsonStr: String): T
   }
 }
