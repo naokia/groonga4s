@@ -1,14 +1,10 @@
 package com.naokia.groonga4s
 
-import javax.xml.ws.Response
-
 import com.naokia.groonga4s.command.{Command, SelectCommand, SelectParameters}
-import com.naokia.groonga4s.response
-import com.naokia.groonga4s.response.{ResponseParser, SelectResponseParser, SelectResponse}
+import com.naokia.groonga4s.response._
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.util.EntityUtils
-import sun.net.www.http.HttpClient
 
 import scala.util.{Success, Failure, Try}
 
@@ -27,13 +23,17 @@ class GroongaClient(uri: String) extends Client {
    * @param command
    * @return
    */
-  private def doGetRequest[T <: response.Response](command: Command, parser: ResponseParser[T]): Try[T] = Try {
+  private def doGetRequest[T <: Response](command: Command, parser: ResponseParser[T]): Try[T] = Try {
     val httpClient = HttpClientBuilder.create().build()
-    val httpGet = new HttpGet(uri + command.stringify)
+    val query = uri + command.stringify
+    val httpGet = new HttpGet(query)
     val httpResponse = httpClient.execute(httpGet)
+    val entity = EntityUtils.toString(httpResponse.getEntity, "UTF-8")
     httpResponse.getStatusLine.getStatusCode match {
-      case status if status == 200 => parser.parse(EntityUtils.toString(httpResponse.getEntity, "UTF-8"))
-      case status if status != 200 => throw new Exception("statuscode: " + status) //TODO
+      case status if status == 200 => parser.parse(entity)
+      case status if status != 200 =>
+        val response = new ErrorResponseParser().parse(entity)
+        throw new GroongaException(response.code, status, response.message, query)
     }
   }
 }

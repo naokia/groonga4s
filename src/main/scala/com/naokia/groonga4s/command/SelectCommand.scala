@@ -34,6 +34,7 @@ class SelectCommand(parameters: SelectParameters) extends Command{
   sb.append(parameters.table)
 
   def stringify(): String = {
+    appendStringSeq("match_columns", parameters.matchColumns)
     appendEncodedString("query", parameters.query)
     appendEncodedString("filter", parameters.filter)
     appendEncodedString("scorer", parameters.scorer)
