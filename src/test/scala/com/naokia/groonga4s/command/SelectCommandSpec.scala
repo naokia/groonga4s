@@ -15,13 +15,21 @@ class SelectCommandSpec extends Specification{
        val command = new SelectCommand(SelectParameters(table="Entries", query=Some("name:John")))
        command.stringify() must equalTo("/d/select.json?table=Entries&query=name%3AJohn")
      }
+     "with matchColumns" >> {
+       val command = new SelectCommand(SelectParameters(table="Entries", query=Some("name:John"), matchColumns=Seq("name")))
+       command.stringify() must equalTo("/d/select.json?table=Entries&match_columns=name&query=name%3AJohn")
+     }
      "with filter" >> {
        val command = new SelectCommand(SelectParameters(table="Entries", filter=Some("n_likes >= 5")))
        command.stringify() must equalTo("/d/select.json?table=Entries&filter=n_likes+%3E%3D+5")
      }
+     "with sortby" >> {
+       val command = new SelectCommand(SelectParameters(table="Entries", sortby=Seq("_id")))
+       command.stringify() must equalTo("/d/select.json?table=Entries&sortby=_id")
+     }
      "with scorer" >> {
        val command = new SelectCommand(SelectParameters(table="Entries", scorer=Some("_score = rand()")))
-       command.stringify() must equalTo("/d/select.json?table=Entries&scorer=_score+%3D+rand%28%29")
+       command.stringify() must equalTo("/d/select.json?table=Entries&scorer=%27_score+%3D+rand%28%29%27")
      }
      "with outputColumns" >> {
        val command = new SelectCommand(SelectParameters(table="Entries", outputColumns=Seq("_id","_key", "_score")))

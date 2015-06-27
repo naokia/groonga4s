@@ -36,6 +36,16 @@ class SelectResponseParserSpec extends Specification{
       response.items(0).get("_key") must beEqualTo(Some("alice"))
       response.items(0).get("age") must beEqualTo(Some(18))
     }
+
+    "must parse Json with some items when hits is different from length of array.(ex: limit parameter used)" >> {
+      val jsonStr = """[[0,1430732073.06866,0.000226974487304688],[[[10],[["_id","UInt32"],["_key","ShortText"],["age","Int8"]],[1,"alice",18], [2,"john",20]]]]"""
+
+      val parser = new SelectResponseParser
+      val response = parser.parse(jsonStr)
+      response.hits must beEqualTo(10)
+      response.items.length must beEqualTo(2)
+    }
+
     "must parse Json with some items, and drilldowns" >> {
       val jsonStr = """[[0,1430822415.36609,5.05447387695312e-05],[[[4],[["_id","UInt32"],["_key","ShortText"],["age","Int8"],["city","ShortText"]],[1,"alice",18,"tokyo"],[2,"john",20,"osaka"],[5,"taro",30,"tokyo"],[6,"jiro",20,"osaka"]],[[3],[["_key","Int8"],["_nsubrecs","Int32"]],[18,1],[20,2],[30,1]],[[2],[["_key","ShortText"],["_nsubrecs","Int32"]],["tokyo",2],["osaka",2]]]]"""
 

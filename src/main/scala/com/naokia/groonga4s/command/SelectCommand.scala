@@ -37,7 +37,8 @@ class SelectCommand(parameters: SelectParameters) extends Command{
     appendStringSeq("match_columns", parameters.matchColumns)
     appendEncodedString("query", parameters.query)
     appendEncodedString("filter", parameters.filter)
-    appendEncodedString("scorer", parameters.scorer)
+    appendStringSeq("sortby", parameters.sortby)
+    appendScript("scorer", parameters.scorer)
     appendStringSeq("output_columns", parameters.outputColumns)
     appendInt("offset", parameters.offset)
     appendInt("limit", parameters.limit)
@@ -60,6 +61,15 @@ class SelectCommand(parameters: SelectParameters) extends Command{
     if(str.isDefined == true){
       appendColumnName(columnName)
       sb.append(encode(str.get))
+    }
+  }
+
+  private def appendScript(columnName: String, str: Option[String]) = {
+    if(str.isDefined == true){
+      appendColumnName(columnName)
+      sb.append(encode("'"))
+      sb.append(encode(str.get))
+      sb.append(encode("'"))
     }
   }
 

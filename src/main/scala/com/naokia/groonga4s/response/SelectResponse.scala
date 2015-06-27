@@ -26,7 +26,8 @@ class SelectResponseParser extends ResponseParser[SelectResponse]{
     val columnNameList = (for(c <- rootNode.get(1).get(0).get(1).elements()) yield c.get(0).asText()).toList
 
     val entityList = if(hits > 0) {
-      val origRowList = Range(2, hits +2).map( i =>
+      val size = rootNode.get(1).get(0).size
+      val origRowList = Range(2, size).map( i =>
         rootNode.get(1).get(0).get(i)
       )
       array2Map(origRowList, columnNameList)
@@ -38,7 +39,7 @@ class SelectResponseParser extends ResponseParser[SelectResponse]{
     SelectResponse(returnCode, processStarted, processingTimes, hits, entityList, drilldowns)
   }
 
-  private def array2Map(origRowList: Seq[Any], columnNameList: Seq[String]): Seq[Map[String, Any]] = {
+  private def array2Map(origRowList: Seq[JsonNode], columnNameList: Seq[String]): Seq[Map[String, Any]] = {
     origRowList map { origRow =>
       origRow.asInstanceOf[ArrayNode].toList.zipWithIndex.map { case (column, i) =>
         Map(columnNameList(i) -> JacksonColumnConverter.convert(column))
