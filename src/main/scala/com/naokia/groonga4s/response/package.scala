@@ -9,6 +9,6 @@ package object response {
   }
 
   trait ResponseParser[T <: Response] {
-    def parse(jsonStr: String): T
+    def parse(jsonStr: String, query: String): T
   }
 }

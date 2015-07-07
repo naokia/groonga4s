@@ -14,18 +14,19 @@ class SelectResponseParserSpec extends Specification{
       val jsonStr = """[[0,1430732073.06866,0.000226974487304688],[[[0],[["_id","UInt32"],["_key","ShortText"],["age","Int8"]]]]]"""
 
       val parser = new SelectResponseParser
-      val response = parser.parse(jsonStr)
+      val response = parser.parse(jsonStr, "http://localhost:10041/d/select?table=Site&someQuery")
       response.returnCode must beEqualTo(0)
       response.processStarted must beEqualTo(1430732073.06866)
       response.processingTimes must beEqualTo(0.000226974487304688)
       response.hits must beEqualTo(0)
       response.items.size must beEqualTo(0)
+      response.query must beEqualTo("http://localhost:10041/d/select?table=Site&someQuery")
     }
     "must parse Json with some items" >> {
       val jsonStr = """[[0,1430732073.06866,0.000226974487304688],[[[2],[["_id","UInt32"],["_key","ShortText"],["age","Int8"]],[1,"alice",18], [2,"john",20]]]]"""
 
       val parser = new SelectResponseParser
-      val response = parser.parse(jsonStr)
+      val response = parser.parse(jsonStr, "http://localhost:10041/d/select?table=Site&someQuery")
       response.returnCode must beEqualTo(0)
       response.processStarted must beEqualTo(1430732073.06866)
       response.processingTimes must beEqualTo(0.000226974487304688)
@@ -41,7 +42,7 @@ class SelectResponseParserSpec extends Specification{
       val jsonStr = """[[0,1430732073.06866,0.000226974487304688],[[[10],[["_id","UInt32"],["_key","ShortText"],["age","Int8"]],[1,"alice",18], [2,"john",20]]]]"""
 
       val parser = new SelectResponseParser
-      val response = parser.parse(jsonStr)
+      val response = parser.parse(jsonStr, "http://localhost:10041/d/select?table=Site&someQuery")
       response.hits must beEqualTo(10)
       response.items.length must beEqualTo(2)
     }
@@ -50,7 +51,7 @@ class SelectResponseParserSpec extends Specification{
       val jsonStr = """[[0,1430822415.36609,5.05447387695312e-05],[[[4],[["_id","UInt32"],["_key","ShortText"],["age","Int8"],["city","ShortText"]],[1,"alice",18,"tokyo"],[2,"john",20,"osaka"],[5,"taro",30,"tokyo"],[6,"jiro",20,"osaka"]],[[3],[["_key","Int8"],["_nsubrecs","Int32"]],[18,1],[20,2],[30,1]],[[2],[["_key","ShortText"],["_nsubrecs","Int32"]],["tokyo",2],["osaka",2]]]]"""
 
       val parser = new SelectResponseParser
-      val response = parser.parse(jsonStr)
+      val response = parser.parse(jsonStr, "http://localhost:10041/d/select?table=Site&someQuery")
       response.drilldowns.length must beEqualTo(2)
       response.drilldowns(0).get(20) must beEqualTo(Some(2))
       response.drilldowns(1).get("tokyo") must beEqualTo(Some(2))
