@@ -55,6 +55,12 @@ class SelectCommandSpec extends Specification{
        val command = new SelectCommand(SelectParameters(table="Entries", drilldownOffset=Some(5)))
        command.stringify() must equalTo("/d/select.json?table=Entries&drilldown_offset=5")
      }
+
+     "with drilldownOutputColumns" >> {
+       val command = new SelectCommand(SelectParameters(table="Entries", drilldownOutputColumns=Seq("_key", "_max")))
+       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown_output_columns=_key%2C_max")
+     }
+
      "with drilldownLimit" >> {
        val command = new SelectCommand(SelectParameters(table="Entries", drilldownLimit=Some(11)))
        command.stringify() must equalTo("/d/select.json?table=Entries&drilldown_limit=11")

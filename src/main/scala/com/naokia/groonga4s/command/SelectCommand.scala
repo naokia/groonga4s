@@ -16,6 +16,7 @@ case class SelectParameters(
   drilldownSortby: Seq[String]=Seq(),
   drilldownOffset: Option[Int]=None,
   drilldownLimit: Option[Int]=None,
+  drilldownOutputColumns: Seq[String]=Seq(),
   cache: Option[Boolean]=None,
   matchEscalationThreshold: Option[Int]=None,
   queryFlags: Option[String]=None,
@@ -46,6 +47,7 @@ class SelectCommand(parameters: SelectParameters) extends Command{
     appendStringSeq("drilldown_sortby", parameters.drilldownSortby)
     appendInt("drilldown_offset", parameters.drilldownOffset)
     appendInt("drilldown_limit", parameters.drilldownLimit)
+    appendStringSeq("drilldown_output_columns", parameters.drilldownOutputColumns)
     appendBoolean("cache", parameters.cache)
     appendInt("match_escalation_threshold", parameters.matchEscalationThreshold)
     appendEncodedString("query_flags", parameters.queryFlags)
