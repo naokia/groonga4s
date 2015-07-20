@@ -2,9 +2,6 @@ package com.naokia.groonga4s.command
 
 import org.specs2.mutable.Specification
 
-/**
- * Created by naoki on 15/05/03.
- */
 class LoadCommandSpec extends Specification{
   "LoadCommand" >> {
     "must execute load command to Groonga" >>{

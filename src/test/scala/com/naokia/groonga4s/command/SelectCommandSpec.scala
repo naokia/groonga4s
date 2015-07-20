@@ -43,28 +43,6 @@ class SelectCommandSpec extends Specification{
        val command = new SelectCommand(SelectParameters(table="Entries", limit=Some(15)))
        command.stringify() must equalTo("/d/select.json?table=Entries&limit=15")
      }
-     "with drilldown" >> {
-       val command = new SelectCommand(SelectParameters(table="Entries", drilldown=Seq("city", "age")))
-       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown=city%2Cage")
-     }
-     "with drilldownSortby" >> {
-       val command = new SelectCommand(SelectParameters(table="Entries", drilldownSortby=Seq("-_nsubrecs", "_key")))
-       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown_sortby=-_nsubrecs%2C_key")
-     }
-     "with drilldownOffset" >> {
-       val command = new SelectCommand(SelectParameters(table="Entries", drilldownOffset=Some(5)))
-       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown_offset=5")
-     }
-
-     "with drilldownOutputColumns" >> {
-       val command = new SelectCommand(SelectParameters(table="Entries", drilldownOutputColumns=Seq("_key", "_max")))
-       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown_output_columns=_key%2C_max")
-     }
-
-     "with drilldownLimit" >> {
-       val command = new SelectCommand(SelectParameters(table="Entries", drilldownLimit=Some(11)))
-       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown_limit=11")
-     }
      "with cache" >> {
        val command = new SelectCommand(SelectParameters(table="Entries", cache=Some(true)))
        command.stringify() must equalTo("/d/select.json?table=Entries&cache=yes")
@@ -89,13 +67,45 @@ class SelectCommandSpec extends Specification{
        val command = new SelectCommand(SelectParameters(table="Entries", adjuster = Some("""content @ "groonga" * 5""")))
        command.stringify() must equalTo("/d/select.json?table=Entries&adjuster=content+%40+%22groonga%22+*+5")
      }
+     "with drilldown" >> {
+       val drilldown = DrilldownParameters("genre")
+       val command = new SelectCommand(SelectParameters(table="Entries", drilldowns=Seq(drilldown)))
+       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown%5Bgenre%5D.keys=genre")
+     }
+     "with drilldownSortby" >> {
+       val drilldown = DrilldownParameters("genre", sortby = Seq("-_nsubrecs", "_key"))
+       val command = new SelectCommand(SelectParameters(table="Entries", drilldowns=Seq(drilldown)))
+       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown%5Bgenre%5D.keys=genre&drilldown%5Bgenre%5D.sortby=-_nsubrecs%2C_key")
+     }
+     "with drilldownOffset" >> {
+       val drilldown = DrilldownParameters("genre", offset = Some(5))
+       val command = new SelectCommand(SelectParameters(table="Entries", drilldowns=Seq(drilldown)))
+       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown%5Bgenre%5D.keys=genre&drilldown%5Bgenre%5D.offset=5")
+     }
+     "with drilldownOutputColumns" >> {
+       val drilldown = DrilldownParameters("genre", outputColumns = Seq("_key", "_max"))
+       val command = new SelectCommand(SelectParameters(table="Entries", drilldowns = Seq(drilldown)))
+       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown%5Bgenre%5D.keys=genre&drilldown%5Bgenre%5D.output_columns=_key%2C_max")
+     }
+     "with drilldownOutputColumns (no key, but key is to be add." >> {
+       val drilldown = DrilldownParameters("genre", outputColumns = Seq("_max"))
+       val command = new SelectCommand(SelectParameters(table="Entries", drilldowns = Seq(drilldown)))
+       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown%5Bgenre%5D.keys=genre&drilldown%5Bgenre%5D.output_columns=_max%2C_key")
+     }
+     "with drilldownLimit" >> {
+       val drilldown = DrilldownParameters("genre", limit = Some(11))
+       val command = new SelectCommand(SelectParameters(table="Entries", drilldowns = Seq(drilldown)))
+       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown%5Bgenre%5D.keys=genre&drilldown%5Bgenre%5D.limit=11")
+     }
      "with drilldownCalcTypes" >> {
-       val command = new SelectCommand(SelectParameters(table="Entries", drilldownCalcTypes = Some("MAX")))
-       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown_calc_types=MAX")
+       val drilldown = DrilldownParameters("genre", calcTypes = Seq("MAX","MIN"))
+       val command = new SelectCommand(SelectParameters(table="Entries", drilldowns = Seq(drilldown)))
+       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown%5Bgenre%5D.keys=genre&drilldown%5Bgenre%5D.calc_types=MAX%2CMIN")
      }
      "with drilldownCalcTarget" >> {
-       val command = new SelectCommand(SelectParameters(table="Entries", drilldownCalcTarget = Some("n_likes")))
-       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown_calc_target=n_likes")
+       val drilldown = DrilldownParameters("genre", calcTarget = Some("n_likes"))
+       val command = new SelectCommand(SelectParameters(table="Entries", drilldowns = Seq(drilldown)))
+       command.stringify() must equalTo("/d/select.json?table=Entries&drilldown%5Bgenre%5D.keys=genre&drilldown%5Bgenre%5D.calc_target=n_likes")
      }
    }
  }

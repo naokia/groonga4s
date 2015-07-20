@@ -15,16 +15,19 @@ trait Client{
 }
 
 /**
- * Created by naoki on 15/04/29.
+ * A client for groonga.
+ *
+ * @param uri scheme and host name.
  */
 class GroongaClient(uri: String) extends Client {
-  def select(parameters: SelectParameters) = doGetRequest[SelectResponse](new SelectCommand(parameters), new SelectResponseParser)
-
   /**
+   * It requests select command to groonga.
    *
-   * @param command
+   * @param parameters parameter set
    * @return
    */
+  def select(parameters: SelectParameters) = doGetRequest[SelectResponse](new SelectCommand(parameters), new SelectResponseParser)
+
   private def doGetRequest[T <: Response](command: Command, parser: ResponseParser[T]): Try[T] = Try {
     val httpClient = HttpClientBuilder.create().build()
     val query = uri + command.stringify

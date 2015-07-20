@@ -2,9 +2,6 @@ package com.naokia.groonga4s.response
 
 import org.specs2.mutable.Specification
 
-/**
- * Created by naoki on 15/06/21.
- */
 class ErrorResponseParserSpec extends Specification{
   "ErrorResponseParser" >> {
     "parse error json" >> {

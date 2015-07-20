@@ -1,10 +1,7 @@
 package com.naokia.groonga4s
 
 /**
- * Created by naoki on 15/06/21.
+ * An exception class for GroongaClient
  */
-case class GroongaException(code: Int, httpCode: Int, message: String, query: String) extends Exception{
-  override def getMessage: String = {
-    message
-  }
-}
+case class GroongaException(code: Int, httpCode: Int, message: String, query: String) extends Exception(message)
+
