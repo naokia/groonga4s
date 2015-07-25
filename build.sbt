@@ -2,10 +2,10 @@ name := "groonga4s"
 
 version := "0.1"
 
-scalaVersion := "2.11.+"
+scalaVersion := "2.11.6"
 
 libraryDependencies ++= Seq(
-  "org.specs2" %% "specs2-core" % "3.5.+" % "test",
+  "org.specs2" %% "specs2-core" % "3.5" % "test",
   "org.apache.httpcomponents" % "httpclient" % "4.4.+",
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.5.+"
 )
