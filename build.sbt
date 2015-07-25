@@ -1,8 +1,10 @@
 name := "groonga4s"
 
-version := "0.1"
+version := "0.1.1"
 
 scalaVersion := "2.11.6"
+
+organization := "com.naokia"
 
 libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-core" % "3.5" % "test",
