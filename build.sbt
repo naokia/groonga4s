@@ -16,3 +16,4 @@ resolvers ++= Seq("scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
 
 scalacOptions in Test ++= Seq("-Yrangepos")
 
+publishTo := Some(Resolver.file("com.naokia", file("./repo/"))(Patterns(true, Resolver.mavenStyleBasePattern)))

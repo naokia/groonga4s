@@ -6,7 +6,7 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 case class ErrorResponse(returnCode: Int, query: String, message: String) extends Response
 
 /**
- * Created by naoki on 15/06/21.
+ * Parser when the status code is not 200
  */
 class ErrorResponseParser extends ResponseParser[ErrorResponse]{
   override def parse(jsonStr: String, query: String): ErrorResponse = {

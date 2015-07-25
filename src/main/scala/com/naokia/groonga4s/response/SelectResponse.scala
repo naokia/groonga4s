@@ -8,7 +8,7 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import collection.JavaConversions._
 
 /**
- * response when select command is sent.
+ * Response when select command is sent.
  *
  * @param returnCode groonga response code
  * @param query requested url
