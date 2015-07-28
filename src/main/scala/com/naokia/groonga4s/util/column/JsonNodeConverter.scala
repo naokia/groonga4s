@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode
 import collection.JavaConversions._
 
 /**
- * Created by naoki on 15/05/16.
+ * An Object for convert JsonNode to Scala primitive types.
  */
-object JacksonColumnConverter extends ColumnConverter[JsonNode]{
+object JsonNodeConverter extends ColumnConverter[JsonNode]{
   def convert(node: JsonNode): Any = {
     node match {
       case node if node.isTextual => node.asText()

@@ -8,7 +8,7 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.util.EntityUtils
 
-import scala.util.{Success, Failure, Try}
+import scala.util.Try
 
 trait Client{
   def select(parameters: SelectParameters): Try[response.SelectResponse]
