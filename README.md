@@ -6,7 +6,7 @@ Groonga client library for Scala
 Add a following dependency into your build.sbt at first.
 
 ``` scala
-libraryDependencies += "com.naokia" %% "groonga4s" % "0.1.1"
+libraryDependencies += "com.naokia" %% "groonga4s" % "0.1.2"
 
 resolvers += "naokia github repository (snapshots)" at "http://naokia.github.io/repositories/snapshots"
 ```
