@@ -1,9 +1,10 @@
 package com.naokia.groonga4s.response
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.naokia.groonga4s.util.column.JsonNodeConverter
 import collection.JavaConversions._
 
-case class DrillDown(key: String, nsubrecs: Option[Int] = None, max: Option[Int] = None, min: Option[Int] = None, sum: Option[Int] = None, avg: Option[Int] = None)
+case class DrillDown(key: Any, nsubrecs: Option[Int] = None, max: Option[Int] = None, min: Option[Int] = None, sum: Option[Int] = None, avg: Option[Int] = None)
 
 /**
  * A parser for DrillDown nodes.
@@ -37,11 +38,11 @@ package object DrillDownParser {
         _.zipWithIndex.map { case (value, i) =>
           val valueType = outputColumns(i)
 
-          val castedValue = if (valueType == keyName) value else value.asInt()
+          val castedValue = if (valueType == keyName) JsonNodeConverter.convert(value) else value.asInt()
           Map(valueType -> castedValue)
         }.reduce((v1, v2) => v1 ++ v2)
       }.map { map =>
-        DrillDown(key = map(keyName).toString, nsubrecs = map.get(nsubrecs).asInstanceOf[Option[Int]], max = map.get(max).asInstanceOf[Option[Int]], min = map.get(min).asInstanceOf[Option[Int]], avg = map.get(avg).asInstanceOf[Option[Int]], sum = map.get(sum).asInstanceOf[Option[Int]])
+        DrillDown(key = map(keyName), nsubrecs = map.get(nsubrecs).asInstanceOf[Option[Int]], max = map.get(max).asInstanceOf[Option[Int]], min = map.get(min).asInstanceOf[Option[Int]], avg = map.get(avg).asInstanceOf[Option[Int]], sum = map.get(sum).asInstanceOf[Option[Int]])
       }.toSeq
       Map(key -> drillDowns)
     }.reduce((v1, v2) => v1 ++ v2)

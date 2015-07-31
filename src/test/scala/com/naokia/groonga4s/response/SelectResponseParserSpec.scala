@@ -50,7 +50,7 @@ class SelectResponseParserSpec extends Specification{
       val response = parser.parse(jsonStr, "http://localhost:10041/d/select?table=Site&someQuery")
       val a = response.drillDownGroups.get("default")
       response.drillDownGroups.get("default").get.length must beEqualTo(3)
-      response.drillDownGroups.get("default").get.head.key must beEqualTo("18")
+      response.drillDownGroups.get("default").get.head.key must beEqualTo(18)
       response.drillDownGroups.get("default").get.head.nsubrecs must beEqualTo(Some(1))
     }
 
@@ -62,7 +62,7 @@ class SelectResponseParserSpec extends Specification{
       val a = response.drillDownGroups.get("genre")
 
       response.drillDownGroups.get("genre").get.length must beEqualTo(2)
-      response.drillDownGroups.get("user").get.head.key must beEqualTo("1000")
+      response.drillDownGroups.get("user").get.head.key must beEqualTo(1000)
       response.drillDownGroups.get("user").get.head.nsubrecs must beEqualTo(Some(2))
     }
   }
