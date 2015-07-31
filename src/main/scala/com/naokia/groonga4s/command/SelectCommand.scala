@@ -2,6 +2,8 @@ package com.naokia.groonga4s.command
 
 import java.net.URLEncoder
 
+import com.naokia.groonga4s.util.request.Query
+
 case class SelectParameters(
                            table: String,
                            matchColumns: Seq[String]=Seq(),
@@ -42,9 +44,9 @@ class SelectCommand(parameters: SelectParameters) extends Command{
    *
    * @return URL query
    */
-  def stringify(): String = {
+  def stringify: String = {
     appendStringSeq("match_columns", parameters.matchColumns)
-    appendEncodedString("query", parameters.query)
+    appendEncodedString("query", parameters.query, escape = true)
     appendEncodedString("filter", parameters.filter)
     appendStringSeq("sortby", parameters.sortby)
     appendScript("scorer", parameters.scorer)
@@ -85,10 +87,11 @@ class SelectCommand(parameters: SelectParameters) extends Command{
     }
   }
 
-  private def appendEncodedString(columnName: String, str: Option[String], drillDownLabel : Option[String] = None) = {
+  private def appendEncodedString(columnName: String, str: Option[String], drillDownLabel : Option[String] = None, escape:Boolean = false) = {
     if(str.isDefined){
       appendColumnName(columnName, drillDownLabel)
-      sb.append(encode(str.get))
+      val target = if(escape) Query.escape(str.get) else str.get
+      sb.append(encode(target))
     }
   }
 

@@ -5,9 +5,6 @@ import com.fasterxml.jackson.databind.node._
 import org.specs2.mutable.Specification
 import java.math.BigDecimal
 
-/**
- * Created by naoki on 15/05/16.
- */
 class JsonNodeConverterSpec extends Specification{
   "JsonNodeConverter" >> {
     "convert TextNode to String value" >> {
