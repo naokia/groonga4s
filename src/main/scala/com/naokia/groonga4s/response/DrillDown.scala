@@ -10,7 +10,6 @@ case class DrillDown(key: Any, nsubrecs: Option[Int] = None, max: Option[Int] = 
  * A parser for DrillDown nodes.
  */
 package object DrillDownParser {
-  val defaultKey = "default"
   val keyName = "_key"
   val nsubrecs = "_nsubrecs"
   val max = "_max"
@@ -24,11 +23,8 @@ package object DrillDownParser {
    * @return
    */
   def parse(jsonNode: JsonNode): Map[String, Seq[DrillDown]] = {
-    val nodes = if(jsonNode.isObject){
-      jsonNode.fields().map {m => Map(m.getKey -> m.getValue)}.reduce((v1, v2) => v1 ++ v2)
-    } else{
-      Map(new String(defaultKey) -> jsonNode)
-    }
+    val nodes = jsonNode.fields().map {m => Map(m.getKey -> m.getValue)}.reduce((v1, v2) => v1 ++ v2)
+
     nodes.map { case (key, node) =>
       val hits = node.get(0).get(0)
       val outputColumns = node.get(1).map { column =>
