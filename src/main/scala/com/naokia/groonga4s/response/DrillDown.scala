@@ -6,6 +6,24 @@ import collection.JavaConversions._
 
 case class DrillDown(key: Any, nsubrecs: Option[Int] = None, max: Option[Int] = None, min: Option[Int] = None, sum: Option[Int] = None, avg: Option[Int] = None)
 
+class DrillDownLabeledGroup(label: String, drillDowns: Map[Any, DrillDown]){
+  def apply(key: Any) = {
+    drillDowns(key)
+  }
+
+  def get(key: Any) = {
+    drillDowns.get(key)
+  }
+
+  def getOrElse(key: Any, default:Any) = {
+    drillDowns.getOrElse(key, default)
+  }
+
+  def toMap = {
+    drillDowns
+  }
+}
+
 /**
  * A parser for DrillDown nodes.
  */
@@ -22,7 +40,7 @@ package object DrillDownParser {
    * @param jsonNode root node of drill down.
    * @return
    */
-  def parse(jsonNode: JsonNode): Map[String, Seq[DrillDown]] = {
+  def parse(jsonNode: JsonNode): Map[String, DrillDownLabeledGroup] = {
     val nodes = jsonNode.fields().map {m => Map(m.getKey -> m.getValue)}.reduce((v1, v2) => v1 ++ v2)
 
     nodes.map { case (key, node) =>
@@ -38,9 +56,10 @@ package object DrillDownParser {
           Map(valueType -> castedValue)
         }.reduce((v1, v2) => v1 ++ v2)
       }.map { map =>
-        DrillDown(key = map(keyName), nsubrecs = map.get(nsubrecs).asInstanceOf[Option[Int]], max = map.get(max).asInstanceOf[Option[Int]], min = map.get(min).asInstanceOf[Option[Int]], avg = map.get(avg).asInstanceOf[Option[Int]], sum = map.get(sum).asInstanceOf[Option[Int]])
-      }.toSeq
-      Map(key -> drillDowns)
+        val key = map(keyName)
+        Map(key -> DrillDown(key = key, nsubrecs = map.get(nsubrecs).asInstanceOf[Option[Int]], max = map.get(max).asInstanceOf[Option[Int]], min = map.get(min).asInstanceOf[Option[Int]], avg = map.get(avg).asInstanceOf[Option[Int]], sum = map.get(sum).asInstanceOf[Option[Int]]))
+      }.reduce((v1, v2) => v1 ++ v2)
+      Map(key -> new DrillDownLabeledGroup(key, drillDowns))
     }.reduce((v1, v2) => v1 ++ v2)
   }
 }

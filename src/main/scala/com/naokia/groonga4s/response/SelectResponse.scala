@@ -24,7 +24,7 @@ case class SelectResponse(
                            processingTimes: Double,
                            hits: Int,
                            items: Seq[Map[String, Any]],
-                           drillDownGroups: Map[String, Seq[DrillDown]]=Map()) extends Response
+                           drillDownGroups: Map[String, DrillDownLabeledGroup]=Map()) extends Response
 
 /**
  * parser for response when select command is sent.
@@ -59,7 +59,7 @@ class SelectResponseParser extends ResponseParser[SelectResponse]{
       Seq()
     }
 
-    val drillDowns = if(rootNode.get(1).elements().size > 1) DrillDownParser.parse(rootNode.get(1).get(1)) else Map[String, Seq[DrillDown]]()
+    val drillDowns = if(rootNode.get(1).elements().size > 1) DrillDownParser.parse(rootNode.get(1).get(1)) else Map[String, DrillDownLabeledGroup]()
 
     SelectResponse(returnCode, query, processStarted, processingTimes, hits, entityList, drillDowns)
   }

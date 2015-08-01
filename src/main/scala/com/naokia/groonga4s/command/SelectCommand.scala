@@ -19,10 +19,10 @@ case class SelectParameters(
                            queryFlags: Option[String]=None,
                            queryExpander: Option[String]=None,
                            adjuster: Option[String]=None,
-                           drilldowns: Seq[DrilldownParameters] = Seq()
+                           drillDowns: Seq[DrillDownParameters] = Seq()
 ) extends Parameters
 
-case class DrilldownParameters(
+case class DrillDownParameters(
                                 key: String,
                                 sortby: Seq[String]=Seq(),
                                 offset: Option[Int]=None,
@@ -70,7 +70,7 @@ class SelectCommand(parameters: SelectParameters) extends Command{
    * If "_key" is not in outputColumns although outputColumns expressly assigned, It adds key to outputColumns parameter.
    */
   private def appendDrillDownParameters() = {
-    parameters.drilldowns.foreach { drilldownParameters =>
+    parameters.drillDowns.foreach { drilldownParameters =>
       val key = drilldownParameters.key
       appendEncodedString("keys", Some(key), Some(key))
       appendStringSeq("sortby", drilldownParameters.sortby, Some(key))

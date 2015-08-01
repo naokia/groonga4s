@@ -49,9 +49,9 @@ class SelectResponseParserSpec extends Specification{
 
       val parser = new SelectResponseParser
       val response = parser.parse(jsonStr, "http://localhost:10041/d/select?table=Site&someQuery")
-      response.drillDownGroups.get("genre").get.length must beEqualTo(2)
-      response.drillDownGroups.get("user").get.head.key must beEqualTo(1000)
-      response.drillDownGroups.get("user").get.head.nsubrecs must beEqualTo(Some(2))
+      response.drillDownGroups("genre").toMap.size must beEqualTo(2)
+      response.drillDownGroups("user")(1000) must beAnInstanceOf[DrillDown]
+      response.drillDownGroups("user")(1000).nsubrecs must beEqualTo(Some(2))
     }
   }
 }
