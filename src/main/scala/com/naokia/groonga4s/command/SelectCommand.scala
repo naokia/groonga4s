@@ -6,8 +6,7 @@ import com.naokia.groonga4s.util.request.Query
 
 case class SelectParameters(
                            table: String,
-                           matchColumns: Seq[String]=Seq(),
-                           query: Option[String]=None,
+                           query: Option[QueryParameters]=None,
                            filter: Option[String]=None,
                            scorer: Option[String]=None,
                            sortby: Seq[String]=Seq(),
@@ -15,12 +14,17 @@ case class SelectParameters(
                            offset: Option[Int]=None,
                            limit: Option[Int]=None,
                            cache: Option[Boolean]=None,
-                           matchEscalationThreshold: Option[Int]=None,
-                           queryFlags: Option[String]=None,
-                           queryExpander: Option[String]=None,
                            adjuster: Option[String]=None,
                            drillDowns: Seq[DrillDownParameters] = Seq()
-) extends Parameters
+                             ) extends Parameters
+
+case class QueryParameters(
+                            query: String,
+                            matchColumns: Seq[String],
+                            queryFlags: Option[String]=None,
+                            queryExpander: Option[String]=None,
+                            matchEscalationThreshold: Option[Int]=None
+                            ) extends Parameters
 
 case class DrillDownParameters(
                                 key: String,
@@ -30,7 +34,7 @@ case class DrillDownParameters(
                                 outputColumns : Seq[String] = Seq(),
                                 calcTypes: Seq[String] = Seq(),
                                 calcTarget: Option[String]=None
-                                )
+                                ) extends Parameters
 
 /**
  * A converter of SelectParameters.
@@ -45,18 +49,14 @@ class SelectCommand(parameters: SelectParameters) extends Command{
    * @return URL query
    */
   def stringify: String = {
-    appendStringSeq("match_columns", parameters.matchColumns)
-    appendEncodedString("query", parameters.query, escape = true)
     appendEncodedString("filter", parameters.filter)
+    appendQueryParameters
     appendStringSeq("sortby", parameters.sortby)
     appendScript("scorer", parameters.scorer)
     appendStringSeq("output_columns", parameters.outputColumns)
     appendInt("offset", parameters.offset)
     appendInt("limit", parameters.limit)
     appendBoolean("cache", parameters.cache)
-    appendInt("match_escalation_threshold", parameters.matchEscalationThreshold)
-    appendEncodedString("query_flags", parameters.queryFlags)
-    appendEncodedString("query_expander", parameters.queryExpander)
     appendEncodedString("adjuster", parameters.adjuster)
 
     appendDrillDownParameters()
@@ -64,6 +64,15 @@ class SelectCommand(parameters: SelectParameters) extends Command{
     sb.toString()
   }
 
+  private def appendQueryParameters = {
+    parameters.query map{ query =>
+      appendEncodedString("query", Some(query.query))
+      appendStringSeq("match_columns", query.matchColumns)
+      appendInt("match_escalation_threshold", query.matchEscalationThreshold)
+      appendEncodedString("query_flags", query.queryFlags)
+      appendEncodedString("query_expander", query.queryExpander)
+    }
+  }
   /**
    * It passes parameters of drill down to StringBuilder.
    *

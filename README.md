@@ -6,7 +6,7 @@ Groonga client library for Scala
 Add a following dependency into your build.sbt at first.
 
 ``` scala
-libraryDependencies += "com.naokia" %% "groonga4s" % "0.1.5"
+libraryDependencies += "com.naokia" %% "groonga4s" % "0.2.0"
 
 resolvers += "naokia github repository (snapshots)" at "http://naokia.github.io/repositories/snapshots"
 ```
@@ -35,10 +35,8 @@ res.items map { item =>
 #### with query
 
 ``` scala
-val res = client.select(SelectParameters("Person",
-query = Some("golf"),
-matchColumns = Seq("profile")
-))
+val query = QueryParameters("golf", Seq("profile", "hobby"))  // query= golf , match_columns=profile,hobby
+val res = client.select(SelectParameters("Person", query = Some(query)))
 ```
 
 #### output drilldowns

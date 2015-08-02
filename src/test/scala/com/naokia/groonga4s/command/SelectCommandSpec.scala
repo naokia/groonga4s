@@ -8,13 +8,11 @@ class SelectCommandSpec extends Specification{
        val command = new SelectCommand(SelectParameters(table="Entries"))
        command.stringify must equalTo("/d/select.json?table=Entries")
      }
-     "with query" >> {
-       val command = new SelectCommand(SelectParameters(table="Entries", query=Some("name:John")))
-       command.stringify must equalTo("/d/select.json?table=Entries&query=name%3AJohn")
-     }
-     "with matchColumns" >> {
-       val command = new SelectCommand(SelectParameters(table="Entries", query=Some("name:John"), matchColumns=Seq("name")))
-       command.stringify must equalTo("/d/select.json?table=Entries&match_columns=name&query=name%3AJohn")
+
+     "with query and matchColumns" >> {
+       val query = QueryParameters("John", Seq("name"))
+       val command = new SelectCommand(SelectParameters(table="Entries", query= Some(query)))
+       command.stringify must equalTo("/d/select.json?table=Entries&query=John&match_columns=name")
      }
      "with filter" >> {
        val command = new SelectCommand(SelectParameters(table="Entries", filter=Some("n_likes >= 5")))
@@ -49,16 +47,19 @@ class SelectCommandSpec extends Specification{
        command.stringify must equalTo("/d/select.json?table=Entries&cache=no")
      }
      "with matchEscalationThreshold" >> {
-       val command = new SelectCommand(SelectParameters(table="Entries", matchEscalationThreshold=Some(-1)))
-       command.stringify must equalTo("/d/select.json?table=Entries&match_escalation_threshold=-1")
+       val query = QueryParameters("John", Seq("name"), matchEscalationThreshold=Some(-1))
+       val command = new SelectCommand(SelectParameters(table="Entries", query= Some(query)))
+       command.stringify must equalTo("/d/select.json?table=Entries&query=John&match_columns=name&match_escalation_threshold=-1")
      }
      "with queryFlags" >> {
-       val command = new SelectCommand(SelectParameters(table="Entries", queryFlags = Some("ALLOW_PRAGMA|ALLOW_COLUMN|ALLOW_UPDATE|ALLOW_LEADING_NOT|NONE")))
-       command.stringify must equalTo("/d/select.json?table=Entries&query_flags=ALLOW_PRAGMA%7CALLOW_COLUMN%7CALLOW_UPDATE%7CALLOW_LEADING_NOT%7CNONE")
+       val query = QueryParameters("John", Seq("name"), queryFlags = Some("ALLOW_PRAGMA|ALLOW_COLUMN|ALLOW_UPDATE|ALLOW_LEADING_NOT|NONE"))
+       val command = new SelectCommand(SelectParameters(table="Entries", query= Some(query)))
+       command.stringify must equalTo("/d/select.json?table=Entries&query=John&match_columns=name&query_flags=ALLOW_PRAGMA%7CALLOW_COLUMN%7CALLOW_UPDATE%7CALLOW_LEADING_NOT%7CNONE")
      }
      "with queryExpander" >> {
-       val command = new SelectCommand(SelectParameters(table="Entries", queryExpander = Some("Thesaurus.synonym")))
-       command.stringify must equalTo("/d/select.json?table=Entries&query_expander=Thesaurus.synonym")
+       val query = QueryParameters("John", Seq("name"), queryExpander = Some("Thesaurus.synonym"))
+       val command = new SelectCommand(SelectParameters(table="Entries", query= Some(query)))
+       command.stringify must equalTo("/d/select.json?table=Entries&query=John&match_columns=name&query_expander=Thesaurus.synonym")
      }
      "with adjuster" >> {
        val command = new SelectCommand(SelectParameters(table="Entries", adjuster = Some("""content @ "groonga" * 5""")))
