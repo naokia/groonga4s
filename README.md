@@ -1,6 +1,10 @@
 # groonga4s
 Groonga client library for Scala
 
+## Supported command
+
+select command only (version 0.2.0)
+
 ## Installation
 
 Add a following dependency into your build.sbt at first.
@@ -10,10 +14,6 @@ libraryDependencies += "com.naokia" %% "groonga4s" % "0.2.0"
 
 resolvers += "naokia github repository (snapshots)" at "http://naokia.github.io/repositories/snapshots"
 ```
-
-## Supported command
-
-select command only (version 0.2.0)
 
 ## Usage
 
