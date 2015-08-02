@@ -1,5 +1,4 @@
-# groonga4s
-Groonga client library for Scala
+# groonga4s - Groonga Scala Client
 
 ## Supported command
 
