@@ -1,12 +1,12 @@
 package com.naokia.groonga4s
 
 import java.net.HttpURLConnection
-import com.naokia.groonga4s.command.{LoadParameters, Command, SelectCommand, SelectParameters}
+import com.naokia.groonga4s.command._
 import com.naokia.groonga4s.response._
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.util.EntityUtils
-import scala.util.{Success, Try}
+import scala.util.{Failure, Success, Try}
 
 trait Client{
   def select(parameters: SelectParameters): Try[response.SelectResponse]
@@ -33,7 +33,7 @@ class GroongaClient(uri: String) extends Client {
 
   private def doGetRequest[T <: Response](command: Command, parser: ResponseParser[T]): Try[T] = Try {
     val httpClient = HttpClientBuilder.create().build()
-    val query = uri + command.stringify
+    val query = uri + command.getQuery
     val httpGet = new HttpGet(query)
     val httpResponse = httpClient.execute(httpGet)
     val entity = EntityUtils.toString(httpResponse.getEntity, "UTF-8")
@@ -43,5 +43,9 @@ class GroongaClient(uri: String) extends Client {
         val response = new ErrorResponseParser().parse(entity, query)
         throw new GroongaException(response.returnCode, status, response.message, response.query)
     }
+  }
+
+  private def doPostRequest[T <: Response](command: PostCommand, parser: ResponseParser[T]): Try[T] = Try {
+    throw new Exception("")
   }
 }
