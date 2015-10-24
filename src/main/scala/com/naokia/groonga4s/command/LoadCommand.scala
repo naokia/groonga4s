@@ -1,14 +1,8 @@
 package com.naokia.groonga4s.command
 
-import java.util
-
-import com.fasterxml.jackson.core._
-import com.fasterxml.jackson.core.JsonParser.NumberType
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer
-import com.fasterxml.jackson.databind.node.{JsonNodeFactory, ArrayNode, JsonNodeType}
-import com.fasterxml.jackson.databind.{ObjectMapper, SerializerProvider, JsonNode, PropertyNamingStrategy}
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.naokia.groonga4s.util.column.{JsonNodeConverter, SimpleLowerCaseWithUnderscoresStrategy}
+import com.naokia.groonga4s.util.column.SimpleLowerCaseWithUnderscoresStrategy
 
 case class LoadParameters[T](clazz: Class[T], values: Seq[T], table: String, ifExists: Option[Boolean]=None)
 
