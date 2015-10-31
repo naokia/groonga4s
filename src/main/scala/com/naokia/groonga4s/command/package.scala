@@ -5,7 +5,7 @@ package object command {
     def getQuery: String
   }
 
-  trait PostCommand extends Command{
+  trait CommandWithBody extends Command{
     def getBody: String
   }
 

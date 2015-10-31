@@ -6,7 +6,7 @@ import com.naokia.groonga4s.util.column.SimpleLowerCaseWithUnderscoresStrategy
 
 case class LoadParameters[T](clazz: Class[T], values: Seq[T], table: String, ifExists: Option[Boolean]=None)
 
-class LoadCommand[T](loadParameters: LoadParameters[T], convert2LowerCase: Boolean = true) extends PostCommand{
+class LoadCommand[T](loadParameters: LoadParameters[T], convert2LowerCase: Boolean = true) extends CommandWithBody{
   override def getQuery: String = {
     val sb = new StringBuilder("/d/load?")
     sb.append("table=")
