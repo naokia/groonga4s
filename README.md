@@ -2,14 +2,15 @@
 
 ## Supported command
 
-select command only (version 0.2.0)
+- select
+- load
 
 ## Installation
 
 Add a following dependency into your build.sbt at first.
 
 ``` scala
-libraryDependencies += "com.naokia" %% "groonga4s" % "0.2.0"
+libraryDependencies += "com.naokia" %% "groonga4s" % "0.3.0"
 
 resolvers += "naokia github repository (snapshots)" at "http://naokia.github.io/repositories/snapshots"
 ```
@@ -54,3 +55,10 @@ val populationOfTokyo = res.drillDownGroups("city")("tokyo").nsubrecs // Some(13
 ))
 ```
 
+### Load command
+
+``` scala
+case class Person(_key: String, mailAddress: String)
+val people = List(Person("taro", "taro@example.com"))
+client.load(LoadParameters("Person", classOf[Person], people))
+```
