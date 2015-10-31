@@ -1,17 +1,13 @@
 package com.naokia.groonga4s
 
-import java.net.HttpURLConnection
-
-import com.naokia.groonga4s.command.{Command, SelectCommand, SelectParameters}
+import com.naokia.groonga4s.command._
+import com.naokia.groonga4s.protocol.HttpRequestSender
 import com.naokia.groonga4s.response._
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.impl.client.HttpClientBuilder
-import org.apache.http.util.EntityUtils
-
 import scala.util.Try
 
 trait Client{
-  def select(parameters: SelectParameters): Try[response.SelectResponse]
+  def select(parameters: SelectParameters): Try[SelectResponse]
+  def load[T](parameters: LoadParameters[T]): Try[LoadResponse]
 }
 
 /**
@@ -20,25 +16,26 @@ trait Client{
  * @param uri scheme and host name.
  */
 class GroongaClient(uri: String) extends Client {
+  val requestSender = new HttpRequestSender(uri)
+
   /**
    * It requests select command to groonga.
    *
    * @param parameters parameter set
    * @return
    */
-  def select(parameters: SelectParameters) = doGetRequest[SelectResponse](new SelectCommand(parameters), new SelectResponseParser)
+  def select(parameters: SelectParameters) = {
+    requestSender.send[SelectResponse](new SelectCommand(parameters), new SelectResponseParser)
+  }
 
-  private def doGetRequest[T <: Response](command: Command, parser: ResponseParser[T]): Try[T] = Try {
-    val httpClient = HttpClientBuilder.create().build()
-    val query = uri + command.stringify
-    val httpGet = new HttpGet(query)
-    val httpResponse = httpClient.execute(httpGet)
-    val entity = EntityUtils.toString(httpResponse.getEntity, "UTF-8")
-    httpResponse.getStatusLine.getStatusCode match {
-      case status if status == HttpURLConnection.HTTP_OK => parser.parse(entity, query)
-      case status if status != HttpURLConnection.HTTP_OK =>
-        val response = new ErrorResponseParser().parse(entity, query)
-        throw new GroongaException(response.returnCode, status, response.message, response.query)
-    }
+  /**
+   * It requests load command to groonga.
+   *
+   * @param parameters
+   * @tparam T
+   * @return
+   */
+  def load[T](parameters: LoadParameters[T]): Try[LoadResponse] = {
+    requestSender.sendWithBody(new LoadCommand[T](parameters), new LoadResponseParser)
   }
 }

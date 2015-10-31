@@ -1,6 +1,6 @@
 name := "groonga4s"
 
-version := "0.2.0"
+version := "0.3.0"
 
 scalaVersion := "2.11.6"
 
@@ -17,5 +17,3 @@ resolvers ++= Seq("scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
 )
 
 scalacOptions in Test ++= Seq("-Yrangepos")
-
-

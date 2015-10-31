@@ -48,7 +48,7 @@ class SelectCommand(parameters: SelectParameters) extends Command{
    *
    * @return URL query
    */
-  def stringify: String = {
+  def getQuery: String = {
     appendEncodedString("filter", parameters.filter)
     appendQueryParameters
     appendStringSeq("sortby", parameters.sortby)

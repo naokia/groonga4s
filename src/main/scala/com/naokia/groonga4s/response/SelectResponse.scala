@@ -55,10 +55,14 @@ class SelectResponseParser extends ResponseParser[SelectResponse]{
         rootNode.get(1).get(0).get(i)
       )
       array2Map(origRows, columnNames)
+      /**
+       * namesからkeyと型を取り出す
+       * groongaの型情報を元にキャストしていき、名前が対応するcase classの値に代入していく
+       * 一回Mapにしないと一括して組み立てられない？？
+       */
     } else{
       Seq()
     }
-
     val drillDowns = if(rootNode.get(1).elements().size > 1) DrillDownParser.parse(rootNode.get(1).get(1)) else Map[String, DrillDownLabeledGroup]()
 
     SelectResponse(returnCode, query, processStarted, processingTimes, hits, entityList, drillDowns)
