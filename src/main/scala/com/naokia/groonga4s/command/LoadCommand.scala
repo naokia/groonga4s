@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.naokia.groonga4s.util.column.SimpleLowerCaseWithUnderscoresStrategy
 
-case class LoadParameters[T](clazz: Class[T], values: Seq[T], table: String, ifExists: Option[Boolean]=None)
+case class LoadParameters[T](table: String, clazz: Class[T], values: Seq[T], ifExists: Option[Boolean]=None)
 
 /**
  * genarate query and convert case class to JSON for POST body
