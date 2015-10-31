@@ -6,6 +6,13 @@ import com.naokia.groonga4s.util.column.SimpleLowerCaseWithUnderscoresStrategy
 
 case class LoadParameters[T](clazz: Class[T], values: Seq[T], table: String, ifExists: Option[Boolean]=None)
 
+/**
+ * genarate query and convert case class to JSON for POST body
+ *
+ * @param loadParameters parameters for load command
+ * @param convert2LowerCase If groonga table adopt snake case naming rule, this value must be true.
+ * @tparam T type of case class for generate JSON body.
+ */
 class LoadCommand[T](loadParameters: LoadParameters[T], convert2LowerCase: Boolean = true) extends CommandWithBody{
   override def getQuery: String = {
     val sb = new StringBuilder("/d/load?")

@@ -1,28 +1,42 @@
-package com.naokia.groonga4s.util.request
+package com.naokia.groonga4s.protocol
 
 import java.net.HttpURLConnection
 
 import com.naokia.groonga4s.GroongaException
-import com.naokia.groonga4s.command.{CommandWithBody, Command}
-import com.naokia.groonga4s.response.{Response, ErrorResponseParser, ResponseParser}
-import org.apache.http.client.methods.{HttpRequestBase, HttpPost, HttpGet}
+import com.naokia.groonga4s.command.{Command, CommandWithBody}
+import com.naokia.groonga4s.response.{ErrorResponseParser, Response, ResponseParser}
+import org.apache.http.client.methods.{HttpGet, HttpPost, HttpRequestBase}
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.util.EntityUtils
 
 import scala.util.Try
 
-trait RequestSender{
-  def send[T <: Response](command: Command, parser: ResponseParser[T]): Try[T]
-  def sendWithBody[T <: Response](command: CommandWithBody, parser: ResponseParser[T]): Try[T]
-}
-
+/**
+ * adopt this when send request with HTTP
+ */
 class HttpRequestSender(uri: String) extends RequestSender{
+  /**
+   * send GET request.
+   *
+   * @param command
+   * @param parser
+   * @tparam T
+   * @return
+   */
   override def send[T <: Response](command: Command, parser: ResponseParser[T]): Try[T] = doSend(parser) {
     val query = uri + command.getQuery
     new HttpGet(query)
   }
 
+  /**
+   * send POST request.
+   *
+   * @param command
+   * @param parser
+   * @tparam T
+   * @return
+   */
   override def sendWithBody[T <: Response](command: CommandWithBody, parser: ResponseParser[T]): Try[T] = doSend(parser) {
     val query = uri + command.getQuery
     val httpPost = new HttpPost(query)
@@ -32,6 +46,14 @@ class HttpRequestSender(uri: String) extends RequestSender{
     httpPost
   }
 
+  /**
+   * send HTTP request actually.
+   *
+   * @param parser
+   * @param f
+   * @tparam T
+   * @return
+   */
   private def doSend[T <: Response](parser: ResponseParser[T])(f: => HttpRequestBase) = Try{
     val httpClient = HttpClientBuilder.create().build()
     val httpMethod = f

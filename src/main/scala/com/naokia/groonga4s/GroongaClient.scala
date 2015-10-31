@@ -1,8 +1,8 @@
 package com.naokia.groonga4s
 
 import com.naokia.groonga4s.command._
+import com.naokia.groonga4s.protocol.HttpRequestSender
 import com.naokia.groonga4s.response._
-import com.naokia.groonga4s.util.request.HttpRequestSender
 import scala.util.Try
 
 trait Client{
@@ -28,6 +28,13 @@ class GroongaClient(uri: String) extends Client {
     requestSender.send[SelectResponse](new SelectCommand(parameters), new SelectResponseParser)
   }
 
+  /**
+   * It requests load command to groonga.
+   *
+   * @param parameters
+   * @tparam T
+   * @return
+   */
   def load[T](parameters: LoadParameters[T]): Try[LoadResponse] = {
     requestSender.sendWithBody(new LoadCommand[T](parameters), new LoadResponseParser)
   }
