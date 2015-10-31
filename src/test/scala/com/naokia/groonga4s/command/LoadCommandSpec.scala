@@ -33,7 +33,21 @@ class LoadCommandSpec extends Specification{
       val people = List[Person](Person(1, "john"), Person(2, "mary"))
       val parameters = LoadParameters[Person](classOf[Person], people, "Entities", Some(true))
       val command = new LoadCommand(parameters)
-      command.getBody must equalTo("""[{"_key":1,"mail_address":"john"},{"_key":2,"mail_address":"mary"}]""")
+      command.getBody must equalTo( """[{"_key":1,"mail_address":"john"},{"_key":2,"mail_address":"mary"}]""")
+    }
+
+    "convert case class with tuple to JSON. tuple convert to vector column" >> {
+      case class Person(_key: Int, mailAddress: String, job: (String, Int, String))
+      val people = List(Person(1, "taro@example.com", ("engineer", 5, "tokyo")))
+      val command = new LoadCommand(LoadParameters[Person](classOf[Person], people, "Entities"))
+      command.getBody must equalTo( """[{"_key":1,"mail_address":"taro@example.com","job":["engineer",5,"tokyo"]}]""")
+    }
+
+    "convert case class with array to JSON. array convert to vector column" >> {
+      case class Person(_key: Int, mailAddress: String, brother: List[String])
+      val people = List(Person(1, "taro@example.com", List("jiro", "saburo")))
+      val command = new LoadCommand(LoadParameters[Person](classOf[Person], people, "Entities"))
+      command.getBody must equalTo( """[{"_key":1,"mail_address":"taro@example.com","brother":["jiro","saburo"]}]""")
     }
   }
 }

@@ -14,6 +14,11 @@ case class LoadParameters[T](clazz: Class[T], values: Seq[T], table: String, ifE
  * @tparam T type of case class for generate JSON body.
  */
 class LoadCommand[T](loadParameters: LoadParameters[T], convert2LowerCase: Boolean = true) extends CommandWithBody{
+  /**
+   * make and return query from LoadParameters.
+   *
+   * @return
+   */
   override def getQuery: String = {
     val sb = new StringBuilder("/d/load?")
     sb.append("table=")
@@ -36,6 +41,11 @@ class LoadCommand[T](loadParameters: LoadParameters[T], convert2LowerCase: Boole
     sb.toString()
   }
 
+  /**
+   * convert list of case class to JSON body. and return it.
+   *
+   * @return JSON string.
+   */
   override def getBody: String = {
     val mapper = new ObjectMapper().setPropertyNamingStrategy(SimpleLowerCaseWithUnderscoresStrategy)
     mapper.registerModule(DefaultScalaModule)
