@@ -48,6 +48,9 @@ class LoadCommandSpec extends Specification{
       val people = List(Person(1, "taro@example.com", List("jiro", "saburo")))
       val command = new LoadCommand(LoadParameters[Person]("Entities", classOf[Person], people))
       command.getBody must equalTo( """[{"_key":1,"mail_address":"taro@example.com","brother":["jiro","saburo"]}]""")
+
     }
   }
 }
+
+

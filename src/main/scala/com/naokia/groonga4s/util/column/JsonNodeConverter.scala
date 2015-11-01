@@ -8,6 +8,7 @@ import collection.JavaConversions._
  */
 object JsonNodeConverter extends ColumnConverter[JsonNode]{
   def convert(node: JsonNode): Any = {
+    val names = node.fieldNames()
     node match {
       case node if node.isTextual => node.asText()
       case node if node.isInt => node.asInt()
