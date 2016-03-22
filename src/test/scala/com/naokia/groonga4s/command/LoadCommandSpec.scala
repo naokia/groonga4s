@@ -25,7 +25,7 @@ class LoadCommandSpec extends Specification{
       val people = List[Person](Person(1, "john"))
       val parameters = LoadParameters[Person]("Entities", classOf[Person], people, Some(true))
       val command = new LoadCommand(parameters, false)
-      command.getQuery must equalTo( """/d/load?table=Entities&columns=_key,mailAddress&ifexists=true""")
+      command.getQuery must equalTo( """/d/load?table=Entities&columns=_key,mail_address&ifexists=true""")
     }
 
     "generate data for POST method " >> {

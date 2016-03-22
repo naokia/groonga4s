@@ -6,7 +6,7 @@ import com.naokia.groonga4s.response._
 import scala.util.Try
 
 trait Client{
-  def select(parameters: SelectParameters): Try[SelectResponse]
+  def select[T](parameters: SelectParameters[T]): Try[SelectResponse]
   def load[T](parameters: LoadParameters[T]): Try[LoadResponse]
 }
 
@@ -24,7 +24,7 @@ class GroongaClient(uri: String) extends Client {
    * @param parameters parameter set
    * @return
    */
-  def select(parameters: SelectParameters) = {
+  def select[T](parameters: SelectParameters[T]) = {
     requestSender.send[SelectResponse](new SelectCommand(parameters), new SelectResponseParser)
   }
 

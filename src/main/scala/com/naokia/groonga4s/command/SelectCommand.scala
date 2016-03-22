@@ -2,15 +2,32 @@ package com.naokia.groonga4s.command
 
 import java.net.URLEncoder
 
+import com.naokia.groonga4s.util.mapping.CollectionConverter
 import com.naokia.groonga4s.util.request.Query
 
-case class SelectParameters(
+/**
+ * TODO: Don't use Any
+ *
+ * @param table
+ * @param clazz
+ * @param query
+ * @param filter
+ * @param scorer
+ * @param sortby
+ * @param offset
+ * @param limit
+ * @param cache
+ * @param adjuster
+ * @param drillDowns
+ * @tparam T
+ */
+case class SelectParameters[T](
                            table: String,
+                           clazz: Class[T],
                            query: Option[QueryParameters]=None,
                            filter: Option[String]=None,
                            scorer: Option[String]=None,
                            sortby: Seq[String]=Seq(),
-                           outputColumns: Seq[String]=Seq(),
                            offset: Option[Int]=None,
                            limit: Option[Int]=None,
                            cache: Option[Boolean]=None,
@@ -39,9 +56,11 @@ case class DrillDownParameters(
 /**
  * A converter of SelectParameters.
  */
-class SelectCommand(parameters: SelectParameters) extends Command{
+class SelectCommand[T](parameters: SelectParameters[T]) extends Command{
   val sb = new StringBuilder("/d/select.json?table=")
   sb.append(parameters.table)
+
+  val keyNames = CollectionConverter.getPropertyNames(parameters.clazz)
 
   /**
    * It converts SelectCommand parameters to URL query.
@@ -49,11 +68,11 @@ class SelectCommand(parameters: SelectParameters) extends Command{
    * @return URL query
    */
   def getQuery: String = {
+    appendStringSeq("output_columns", keyNames)
     appendEncodedString("filter", parameters.filter)
     appendQueryParameters
     appendStringSeq("sortby", parameters.sortby)
     appendScript("scorer", parameters.scorer)
-    appendStringSeq("output_columns", parameters.outputColumns)
     appendInt("offset", parameters.offset)
     appendInt("limit", parameters.limit)
     appendBoolean("cache", parameters.cache)

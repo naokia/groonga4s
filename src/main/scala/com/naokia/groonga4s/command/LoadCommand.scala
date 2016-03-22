@@ -3,6 +3,7 @@ package com.naokia.groonga4s.command
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.naokia.groonga4s.util.column.SimpleLowerCaseWithUnderscoresStrategy
+import com.naokia.groonga4s.util.mapping.CollectionConverter
 
 case class LoadParameters[T](table: String, clazz: Class[T], values: Seq[T], ifExists: Option[Boolean]=None)
 
@@ -25,7 +26,7 @@ class LoadCommand[T](loadParameters: LoadParameters[T], convert2LowerCase: Boole
     sb.append(loadParameters.table)
     sb.append("&columns=")
 
-    val keys = loadParameters.clazz.getDeclaredFields.map(_.getName).filter(!_.startsWith("$")).map { name =>
+    val keys = CollectionConverter.getPropertyNames(loadParameters.clazz).map { name =>
       if(convert2LowerCase) {
         SimpleLowerCaseWithUnderscoresStrategy.translate(name)
       } else {
