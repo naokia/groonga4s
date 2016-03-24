@@ -2,12 +2,7 @@ package com.naokia.groonga4s.util.mapping
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.PropertyNamingStrategyBase
 import com.naokia.groonga4s.util.column.SimpleLowerCaseWithUnderscoresStrategy
-
-import scala.reflect.runtime.universe._
 import scala.reflect.{ClassTag, classTag}
-import com.fasterxml.jackson.databind._
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import scala.reflect._
 import scala.reflect.runtime.universe._
 
 /**
@@ -30,7 +25,7 @@ object CollectionConverter {
       if(param.typeSignature <:< typeOf[Option[Any]])
         map.get(paramName)
       else
-        map.get(paramName).getOrElse(throw new IllegalArgumentException("Map is missing required parameter named " + paramName))
+        map.getOrElse(paramName, throw new IllegalArgumentException("Map is missing required parameter named " + paramName))
     })
 
     constructorMirror(constructorArgs:_*).asInstanceOf[T]
