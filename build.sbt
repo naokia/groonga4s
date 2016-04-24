@@ -1,6 +1,6 @@
 name := "groonga4s"
 
-version := "0.3.0"
+version := "0.6.0"
 
 scalaVersion := "2.11.6"
 

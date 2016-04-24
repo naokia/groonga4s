@@ -8,7 +8,7 @@ case class ErrorResponse(returnCode: Int, query: String, message: String) extend
 /**
  * Parser when the status code is not 200
  */
-class ErrorResponseParser extends ResponseParser[ErrorResponse]{
+class ErrorResponseParser extends ResponseParser[Nothing, ErrorResponse]{
   override def parse(jsonStr: String, query: String): ErrorResponse = {
     val mapper = new ObjectMapper
     mapper.registerModule(DefaultScalaModule)

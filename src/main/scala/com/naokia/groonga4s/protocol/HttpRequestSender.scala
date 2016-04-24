@@ -24,7 +24,7 @@ class HttpRequestSender(uri: String) extends RequestSender{
    * @tparam T
    * @return
    */
-  override def send[T <: Response](command: Command, parser: ResponseParser[T]): Try[T] = doSend(parser) {
+  override def send[T, U <: Response](command: Command, parser: ResponseParser[T,U]): Try[U] = doSend(parser) {
     val query = uri + command.getQuery
     new HttpGet(query)
   }
@@ -37,7 +37,7 @@ class HttpRequestSender(uri: String) extends RequestSender{
    * @tparam T
    * @return
    */
-  override def sendWithBody[T <: Response](command: CommandWithBody, parser: ResponseParser[T]): Try[T] = doSend(parser) {
+  override def sendWithBody[T, U <: Response](command: CommandWithBody, parser: ResponseParser[T, U]): Try[U] = doSend(parser) {
     val query = uri + command.getQuery
     val httpPost = new HttpPost(query)
     httpPost.setHeader("Content-Type", "application/json; charset=UTF-8")
@@ -54,7 +54,7 @@ class HttpRequestSender(uri: String) extends RequestSender{
    * @tparam T
    * @return
    */
-  private def doSend[T <: Response](parser: ResponseParser[T])(f: => HttpRequestBase) = Try{
+  private def doSend[T, U <: Response](parser: ResponseParser[T, U])(f: => HttpRequestBase) = Try[U]{
     val httpClient = HttpClientBuilder.create().build()
     val httpMethod = f
     val uri = httpMethod.getURI.toString

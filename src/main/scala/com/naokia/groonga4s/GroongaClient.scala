@@ -4,9 +4,11 @@ import com.naokia.groonga4s.command._
 import com.naokia.groonga4s.protocol.HttpRequestSender
 import com.naokia.groonga4s.response._
 import scala.util.Try
+import scala.reflect.runtime.universe._
 
 trait Client{
-  def select[T](parameters: SelectParameters[T]): Try[SelectResponse]
+  //def select[T](parameters: SelectParameters[T]): Try[SelectResponse[T]]
+  def select[T: TypeTag](parameters: SelectParameters[T]): Try[SelectResponse[T]]
   def load[T](parameters: LoadParameters[T]): Try[LoadResponse]
 }
 
@@ -24,8 +26,9 @@ class GroongaClient(uri: String) extends Client {
    * @param parameters parameter set
    * @return
    */
-  def select[T](parameters: SelectParameters[T]) = {
-    requestSender.send[SelectResponse](new SelectCommand(parameters), new SelectResponseParser)
+  def select[T: TypeTag](parameters: SelectParameters[T]) = {
+    val tag = typeTag[T]
+    requestSender.send[T,SelectResponse[T]](new SelectCommand(parameters), new SelectResponseParser[T])
   }
 
   /**

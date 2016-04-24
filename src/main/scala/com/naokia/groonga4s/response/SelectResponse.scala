@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.naokia.groonga4s.util.column.JsonNodeConverter
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.naokia.groonga4s.util.mapping.CollectionConverter
 import collection.JavaConversions._
+import scala.reflect.runtime.universe._
 
 /**
  * Response when select command is sent.
@@ -17,21 +19,23 @@ import collection.JavaConversions._
  * @param items selected items
  * @param drillDownGroups a result of drill down
  */
-case class SelectResponse(
+case class SelectResponse[T](
                            returnCode: Int,
                            query: String,
                            processStarted: Double,
                            processingTimes: Double,
                            hits: Int,
-                           items: Seq[Map[String, Any]],
+                           items: Seq[T],
                            drillDownGroups: Map[String, DrillDownLabeledGroup]=Map()) extends Response
 
 /**
  * parser for response when select command is sent.
  */
-class SelectResponseParser extends ResponseParser[SelectResponse]{
+class SelectResponseParser[T](implicit tag: TypeTag[T]) extends ResponseParser[T,SelectResponse[T]]{
   val mapper = new ObjectMapper
   mapper.registerModule(DefaultScalaModule)
+
+  val tpe = typeOf[T]
 
   /**
    * It converts groonga's response to SelectResponse
@@ -40,7 +44,7 @@ class SelectResponseParser extends ResponseParser[SelectResponse]{
    * @param query sent url
    * @return
    */
-  def parse(jsonStr: String, query: String): SelectResponse = {
+  override def parse(jsonStr: String, query: String) = {
     val rootNode = mapper.readValue(jsonStr, classOf[JsonNode])
 
     val returnCode = rootNode.get(0).get(0).asInt
@@ -54,7 +58,10 @@ class SelectResponseParser extends ResponseParser[SelectResponse]{
       val origRows = Range(2, size).map( i =>
         rootNode.get(1).get(0).get(i)
       )
-      array2Map(origRows, columnNames)
+
+      array2Map(origRows, columnNames).map(item =>
+        CollectionConverter.map2class[T](tpe, item)
+      )
       /**
        * namesからkeyと型を取り出す
        * groongaの型情報を元にキャストしていき、名前が対応するcase classの値に代入していく

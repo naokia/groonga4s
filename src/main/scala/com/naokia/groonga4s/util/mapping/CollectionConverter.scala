@@ -13,11 +13,10 @@ object CollectionConverter {
    * convert Map to case class
    *
    * @param map Map
-   * @tparam T type parameter of clazz
    * @return
    */
-  def map2class[T: TypeTag: ClassTag](map: Map[String, _], propertyNamingStrategy: Option[PropertyNamingStrategyBase] = Some(SimpleLowerCaseWithUnderscoresStrategy)): T = {
-    val (constructorMirror, paramLists) = reflectConstructor[T]()
+  def map2class[T](tpe: Type, map: Map[String, _], propertyNamingStrategy: Option[PropertyNamingStrategyBase] = Some(SimpleLowerCaseWithUnderscoresStrategy)): T = {
+    val (constructorMirror, paramLists) = reflectConstructor(tpe)
 
     val constructorArgs = paramLists.map( (param:Symbol) => {
       val paramName = applyNamingStrategy(param.name.toString, propertyNamingStrategy)
@@ -50,13 +49,14 @@ object CollectionConverter {
     }
   }
 
-  private def reflectConstructor[T: TypeTag: ClassTag](rm: Option[Mirror] = None): (MethodMirror, List[Symbol])= {
-    val classTest = typeOf[T].typeSymbol.asClass
+  private def reflectConstructor(tpe: Type, rm: Option[Mirror] = None): (MethodMirror, List[Symbol])= {
+    val classTest = tpe.typeSymbol.asClass
     val classMirror = (rm match {
       case Some(rm) => rm
-      case None => runtimeMirror(classTag[T].runtimeClass.getClassLoader)
+      case None => runtimeMirror(tpe.getClass.getClassLoader)
+
     }).reflectClass(classTest)
-    val constructor = typeOf[T].decl(termNames.CONSTRUCTOR).asMethod
+    val constructor = tpe.decl(termNames.CONSTRUCTOR).asMethod
     (classMirror.reflectConstructor(constructor), constructor.paramLists.flatten)
   }
 

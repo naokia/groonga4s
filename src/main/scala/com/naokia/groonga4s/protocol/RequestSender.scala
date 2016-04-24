@@ -9,6 +9,6 @@ import scala.util.Try
  * Interface for several protocol rappers (ex: HTTP, GQTP)
  */
 trait RequestSender{
-  def send[T <: Response](command: Command, parser: ResponseParser[T]): Try[T]
-  def sendWithBody[T <: Response](command: CommandWithBody, parser: ResponseParser[T]): Try[T]
+  def send[T, U <: Response](command: Command, parser: ResponseParser[T,U]): Try[U]
+  def sendWithBody[T, U <: Response](command: CommandWithBody, parser: ResponseParser[T, U]): Try[U]
 }

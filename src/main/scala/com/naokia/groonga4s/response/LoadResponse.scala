@@ -14,7 +14,7 @@ case class LoadResponse(
 /**
  * LoadResponseParser parse JSON for load command.
  */
-class LoadResponseParser extends ResponseParser[LoadResponse]{
+class LoadResponseParser extends ResponseParser[Nothing, LoadResponse]{
   override def parse(jsonStr: String, query: String): LoadResponse = {
     val mapper = new ObjectMapper
     mapper.registerModule(DefaultScalaModule)
