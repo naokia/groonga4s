@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.naokia.groonga4s.util.mapping.CollectionConverter
 import collection.JavaConversions._
 import scala.reflect.runtime.universe._
+import scala.reflect.{ClassTag, classTag}
 
 /**
  * Response when select command is sent.
@@ -31,7 +32,7 @@ case class SelectResponse[T](
 /**
  * parser for response when select command is sent.
  */
-class SelectResponseParser[T](implicit tag: TypeTag[T]) extends ResponseParser[T,SelectResponse[T]]{
+class SelectResponseParser[T](implicit tt: TypeTag[T], implicit val ct: ClassTag[T]) extends ResponseParser[T,SelectResponse[T]]{
   val mapper = new ObjectMapper
   mapper.registerModule(DefaultScalaModule)
 
@@ -60,13 +61,8 @@ class SelectResponseParser[T](implicit tag: TypeTag[T]) extends ResponseParser[T
       )
 
       array2Map(origRows, columnNames).map(item =>
-        CollectionConverter.map2class[T](tpe, item)
+        CollectionConverter.map2class[T](item)
       )
-      /**
-       * namesからkeyと型を取り出す
-       * groongaの型情報を元にキャストしていき、名前が対応するcase classの値に代入していく
-       * 一回Mapにしないと一括して組み立てられない？？
-       */
     } else{
       Seq()
     }
