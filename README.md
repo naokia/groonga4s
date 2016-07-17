@@ -29,18 +29,20 @@ val client = new GroongaClient("http://localhost:10041")
 
 ``` scala
 // select from "Person" table
-val res = client.select(SelectParameters("Person", filter = Some( """_key=="alice""""))).recover({
+case class Person(_key: String, city: String, profile: String, hobby: String)
+
+val res = client.select(SelectParameters("Person", classOf[Person], filter = Some( """_key=="alice""""))).recover({
   case e:GroongaException => throw e
 }).get
-res.items map { item =>
-  item("_key") // alice
+res.items map { item => // Person
+  item._key // alice
 }
 ```
 #### with query
 
 ``` scala
 val query = QueryParameters("golf", Seq("profile", "hobby"))  // query= golf , match_columns=profile,hobby
-val res = client.select(SelectParameters("Person", query = Some(query)))
+val res = client.select(SelectParameters("Person", classOf[Person], query = Some(query)))
 ```
 
 #### output drilldowns
@@ -48,7 +50,7 @@ val res = client.select(SelectParameters("Person", query = Some(query)))
 ``` scala
 val drillDownParameters = DrillDownParameters("city")
 
-val res = client.select(SelectParameters("Person", drillDowns = Seq(drillDownParameters))).recover({
+val res = client.select(SelectParameters("Person", classOf[Person], drillDowns = Seq(drillDownParameters))).recover({
   case e:GroongaException => throw e
 }).get
 val populationOfTokyo = res.drillDownGroups("city")("tokyo").nsubrecs // Some(13350000)
