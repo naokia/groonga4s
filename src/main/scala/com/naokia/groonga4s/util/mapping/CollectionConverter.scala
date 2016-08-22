@@ -6,11 +6,11 @@ import scala.reflect.{ClassTag, classTag}
 import scala.reflect.runtime.universe._
 
 /**
- * convert some collection to case class
+ * Converts some collection to case class
  */
 object CollectionConverter {
   /**
-   * convert Map to case class
+   * Converts Map to case class
    *
    * @param map Map
    * @return
@@ -31,7 +31,7 @@ object CollectionConverter {
   }
 
   /**
-    * get name of properties
+    * Get name of properties
     *
     * @param clazz
     * @param propertyNamingStrategy
@@ -62,7 +62,7 @@ object CollectionConverter {
   }
 
   /**
-   * convert Seq to case class
+   * Converts Seq to case class
    *
    * TODO: don't use Any
    *

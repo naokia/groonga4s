@@ -26,6 +26,7 @@ class DrillDownLabeledGroup(label: String, drillDowns: Map[Any, DrillDown]){
 
 /**
  * A parser for DrillDown nodes.
+  *
  */
 package object DrillDownParser {
   val keyName = "_key"
@@ -36,7 +37,8 @@ package object DrillDownParser {
   val sum = "_sum"
 
   /**
-   * It converts Json node of drilldowns to Map
+   * Converts Json node of drilldowns to Map
+   *
    * @param jsonNode root node of drill down.
    * @return
    */

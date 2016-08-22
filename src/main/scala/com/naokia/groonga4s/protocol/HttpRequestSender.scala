@@ -13,7 +13,7 @@ import org.apache.http.util.EntityUtils
 import scala.util.Try
 
 /**
- * adopt this when send request with HTTP
+ * Adopt this when send request with HTTP
  */
 class HttpRequestSender(uri: String) extends RequestSender{
   /**
@@ -30,7 +30,7 @@ class HttpRequestSender(uri: String) extends RequestSender{
   }
 
   /**
-   * send POST request.
+   * Sends POST request.
    *
    * @param command
    * @param parser
@@ -47,7 +47,7 @@ class HttpRequestSender(uri: String) extends RequestSender{
   }
 
   /**
-   * send HTTP request actually.
+   * Send HTTP request actually.
    *
    * @param parser
    * @param f
