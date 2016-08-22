@@ -59,12 +59,16 @@ class HttpRequestSender(uri: String) extends RequestSender{
     val httpMethod = f
     val uri = httpMethod.getURI.toString
     val httpResponse = httpClient.execute(httpMethod)
-    val entity = EntityUtils.toString(httpResponse.getEntity, "UTF-8")
-    httpResponse.getStatusLine.getStatusCode match {
-      case status if status == HttpURLConnection.HTTP_OK => parser.parse(entity, uri)
-      case status if status != HttpURLConnection.HTTP_OK =>
-        val response = new ErrorResponseParser().parse(entity, uri)
-        throw new GroongaException(response.returnCode, status, response.message, response.query)
+    try {
+      val entity = EntityUtils.toString(httpResponse.getEntity, "UTF-8")
+      httpResponse.getStatusLine.getStatusCode match {
+        case status if status == HttpURLConnection.HTTP_OK => parser.parse(entity, uri)
+        case status if status != HttpURLConnection.HTTP_OK =>
+          val response = new ErrorResponseParser().parse(entity, uri)
+          throw new GroongaException(response.returnCode, status, response.message, response.query)
+      }
+    } finally {
+      httpClient.close()
     }
   }
 }
