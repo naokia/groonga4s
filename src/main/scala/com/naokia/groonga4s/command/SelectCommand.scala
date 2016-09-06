@@ -63,7 +63,7 @@ class SelectCommand[T](parameters: SelectParameters[T]) extends Command{
   val keyNames = CollectionConverter.getPropertyNames(parameters.clazz)
 
   /**
-   * It converts SelectCommand parameters to URL query.
+   * Converts SelectCommand parameters to URL query.
    *
    * @return URL query
    */
@@ -93,7 +93,7 @@ class SelectCommand[T](parameters: SelectParameters[T]) extends Command{
     }
   }
   /**
-   * It passes parameters of drill down to StringBuilder.
+   * Passes parameters of drill down to StringBuilder.
    *
    * If "_key" is not in outputColumns although outputColumns expressly assigned, It adds key to outputColumns parameter.
    */

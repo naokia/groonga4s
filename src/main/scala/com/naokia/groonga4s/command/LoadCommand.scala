@@ -8,7 +8,7 @@ import com.naokia.groonga4s.util.mapping.CollectionConverter
 case class LoadParameters[T](table: String, clazz: Class[T], values: Seq[T], ifExists: Option[Boolean]=None)
 
 /**
- * genarate query and convert case class to JSON for POST body
+ * Genarates query and convert case class to JSON for POST body
  *
  * @param loadParameters parameters for load command
  * @param convert2LowerCase If groonga table adopt snake case naming rule, this value must be true.
@@ -16,7 +16,7 @@ case class LoadParameters[T](table: String, clazz: Class[T], values: Seq[T], ifE
  */
 class LoadCommand[T](loadParameters: LoadParameters[T], convert2LowerCase: Boolean = true) extends CommandWithBody{
   /**
-   * make and return query from LoadParameters.
+   * Make and return query from LoadParameters.
    *
    * @return
    */
@@ -43,7 +43,7 @@ class LoadCommand[T](loadParameters: LoadParameters[T], convert2LowerCase: Boole
   }
 
   /**
-   * convert list of case class to JSON body. and return it.
+   * Converts list of case class to JSON body. and return it.
    *
    * @return JSON string.
    */

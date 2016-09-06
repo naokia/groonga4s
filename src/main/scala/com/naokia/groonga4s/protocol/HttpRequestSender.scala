@@ -13,7 +13,7 @@ import org.apache.http.util.EntityUtils
 import scala.util.Try
 
 /**
- * adopt this when send request with HTTP
+ * Adopt this when send request with HTTP
  */
 class HttpRequestSender(uri: String) extends RequestSender{
   /**
@@ -30,7 +30,7 @@ class HttpRequestSender(uri: String) extends RequestSender{
   }
 
   /**
-   * send POST request.
+   * Sends POST request.
    *
    * @param command
    * @param parser
@@ -47,7 +47,7 @@ class HttpRequestSender(uri: String) extends RequestSender{
   }
 
   /**
-   * send HTTP request actually.
+   * Send HTTP request actually.
    *
    * @param parser
    * @param f
@@ -59,12 +59,16 @@ class HttpRequestSender(uri: String) extends RequestSender{
     val httpMethod = f
     val uri = httpMethod.getURI.toString
     val httpResponse = httpClient.execute(httpMethod)
-    val entity = EntityUtils.toString(httpResponse.getEntity, "UTF-8")
-    httpResponse.getStatusLine.getStatusCode match {
-      case status if status == HttpURLConnection.HTTP_OK => parser.parse(entity, uri)
-      case status if status != HttpURLConnection.HTTP_OK =>
-        val response = new ErrorResponseParser().parse(entity, uri)
-        throw new GroongaException(response.returnCode, status, response.message, response.query)
+    try {
+      val entity = EntityUtils.toString(httpResponse.getEntity, "UTF-8")
+      httpResponse.getStatusLine.getStatusCode match {
+        case status if status == HttpURLConnection.HTTP_OK => parser.parse(entity, uri)
+        case status if status != HttpURLConnection.HTTP_OK =>
+          val response = new ErrorResponseParser().parse(entity, uri)
+          throw new GroongaException(response.returnCode, status, response.message, response.query)
+      }
+    } finally {
+      httpClient.close()
     }
   }
 }

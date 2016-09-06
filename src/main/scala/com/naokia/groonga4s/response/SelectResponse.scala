@@ -30,7 +30,7 @@ case class SelectResponse[T](
                            drillDownGroups: Map[String, DrillDownLabeledGroup]=Map()) extends Response
 
 /**
- * parser for response when select command is sent.
+ * Parser for response when select command is sent.
  */
 class SelectResponseParser[T](implicit tt: TypeTag[T], implicit val ct: ClassTag[T]) extends ResponseParser[T,SelectResponse[T]]{
   val mapper = new ObjectMapper
@@ -39,7 +39,7 @@ class SelectResponseParser[T](implicit tt: TypeTag[T], implicit val ct: ClassTag
   val tpe = typeOf[T]
 
   /**
-   * It converts groonga's response to SelectResponse
+   * Converts groonga's response to SelectResponse
    *
    * @param jsonStr response body from groonga
    * @param query sent url
@@ -72,7 +72,7 @@ class SelectResponseParser[T](implicit tt: TypeTag[T], implicit val ct: ClassTag
   }
 
   /**
-   * It converts returned records to Map
+   * Converts returned records to Map
    *
    * @param origRows records returned from groonga
    * @param columnNameList list of column name returned from groonga

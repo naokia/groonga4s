@@ -22,7 +22,7 @@ class GroongaClient(uri: String) extends Client {
   val requestSender = new HttpRequestSender(uri)
 
   /**
-   * It requests select command to groonga.
+   * Sends select command to groonga.
    *
    * @param parameters parameter set
    * @return
@@ -34,7 +34,7 @@ class GroongaClient(uri: String) extends Client {
   }
 
   /**
-   * It requests load command to groonga.
+   * Sends load command to groonga.
    *
    * @param parameters
    * @tparam T
