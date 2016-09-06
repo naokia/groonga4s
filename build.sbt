@@ -12,8 +12,4 @@ libraryDependencies ++= Seq(
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.7.2"
 )
 
-resolvers ++= Seq("scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
-"Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-)
-
 scalacOptions in Test ++= Seq("-Yrangepos")
