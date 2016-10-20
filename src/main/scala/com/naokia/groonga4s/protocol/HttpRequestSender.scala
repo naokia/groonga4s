@@ -68,6 +68,7 @@ class HttpRequestSender(uri: String) extends RequestSender{
           throw new GroongaException(response.returnCode, status, response.message, response.query)
       }
     } finally {
+      httpResponse.close()
       httpClient.close()
     }
   }
