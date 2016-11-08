@@ -8,3 +8,6 @@ package object response {
     def parse(jsonStr: String, query: String): U
   }
 }
+
+case class ResponseParseException(message: String, cause: Throwable) extends Exception(message, cause)
+

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.naokia.groonga4s.util.column.JsonNodeConverter
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.naokia.groonga4s.ResponseParseException
 import com.naokia.groonga4s.util.mapping.CollectionConverter
+
 import collection.JavaConversions._
 import scala.reflect.runtime.universe._
 import scala.reflect.{ClassTag, classTag}
@@ -46,29 +48,35 @@ class SelectResponseParser[T](implicit tt: TypeTag[T], implicit val ct: ClassTag
    * @return
    */
   override def parse(jsonStr: String, query: String) = {
-    val rootNode = mapper.readValue(jsonStr, classOf[JsonNode])
+    try {
+      val rootNode = mapper.readValue(jsonStr, classOf[JsonNode])
 
-    val returnCode = rootNode.get(0).get(0).asInt
-    val processStarted = rootNode.get(0).get(1).asDouble()
-    val processingTimes = rootNode.get(0).get(2).asDouble()
-    val hits = rootNode.get(1).get(0).get(0).get(0).asInt()
-    val columnNames = (for(c <- rootNode.get(1).get(0).get(1).elements()) yield c.get(0).asText()).toList
+      val returnCode = rootNode.get(0).get(0).asInt
+      val processStarted = rootNode.get(0).get(1).asDouble()
+      val processingTimes = rootNode.get(0).get(2).asDouble()
+      val hits = rootNode.get(1).get(0).get(0).get(0).asInt()
+      val columnNames = (for (c <- rootNode.get(1).get(0).get(1).elements()) yield c.get(0).asText()).toList
+      val documentNode = rootNode.get(1).get(0)
 
-    val entityList = if(hits > 0) {
-      val size = rootNode.get(1).get(0).size
-      val origRows = Range(2, size).map( i =>
-        rootNode.get(1).get(0).get(i)
-      )
+      val entityList = if (hits > 0) {
+        val size = documentNode.size
+        val origRows = Range(2, size).map(i =>
+          documentNode.get(i)
+        )
 
-      array2Map(origRows, columnNames).map(item =>
-        CollectionConverter.map2class[T](item)
-      )
-    } else{
-      Seq()
+        array2Map(origRows, columnNames).map(item =>
+          CollectionConverter.map2class[T](item)
+        )
+      } else {
+        Seq()
+      }
+      val drillDowns = if (rootNode.get(1).elements().size > 1) DrillDownParser.parse(rootNode.get(1).get(1)) else Map[String, DrillDownLabeledGroup]()
+
+      SelectResponse(returnCode, query, processStarted, processingTimes, hits, entityList, drillDowns)
+    } catch {
+      case e: NullPointerException =>
+        throw ResponseParseException("A Response JSON may be broken, or Version of Groonga is different: " + jsonStr,e)
     }
-    val drillDowns = if(rootNode.get(1).elements().size > 1) DrillDownParser.parse(rootNode.get(1).get(1)) else Map[String, DrillDownLabeledGroup]()
-
-    SelectResponse(returnCode, query, processStarted, processingTimes, hits, entityList, drillDowns)
   }
 
   /**

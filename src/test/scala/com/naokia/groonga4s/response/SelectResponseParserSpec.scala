@@ -2,6 +2,7 @@ package com.naokia.groonga4s.response
 
 import java.util.Date
 
+import com.naokia.groonga4s.ResponseParseException
 import org.specs2.json.{JSONArray, JSONObject}
 import org.specs2.mutable.Specification
 case class Person(_id: Int, _key: String, age: Int)
@@ -55,6 +56,13 @@ class SelectResponseParserSpec extends Specification{
       response.drillDownGroups("genre").toMap.size must beEqualTo(2)
       response.drillDownGroups("user")(1000) must beAnInstanceOf[DrillDown]
       response.drillDownGroups("user")(1000).nsubrecs must beEqualTo(Some(2))
+    }
+
+    "must throw an exception when incorrect format JSON" >> {
+      val jsonStr = """"{}""""
+
+      val parser = new SelectResponseParser[Site]
+      parser.parse(jsonStr, "http://localhost:10041/d/select?table=Site&someQuery") must throwAn[ResponseParseException]
     }
   }
 }
