@@ -62,7 +62,7 @@ class SelectResponseParserSpec extends Specification{
       val jsonStr = """"{}""""
 
       val parser = new SelectResponseParser[Site]
-      parser.parse(jsonStr, "http://localhost:10041/d/select?table=Site&someQuery") must throwAn[ResponseParseException]
+      parser.parse(jsonStr, "http://localhost:10041/d/select?table=Site&someQuery") must throwA[ResponseParseException]
     }
   }
 }
