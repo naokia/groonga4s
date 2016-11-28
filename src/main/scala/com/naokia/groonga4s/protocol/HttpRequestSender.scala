@@ -65,7 +65,7 @@ class HttpRequestSender(uri: String) extends RequestSender{
         case status if status == HttpURLConnection.HTTP_OK => parser.parse(entity, uri)
         case status if status != HttpURLConnection.HTTP_OK =>
           val response = new ErrorResponseParser().parse(entity, uri)
-          throw new GroongaException(response.returnCode, status, response.message, response.query)
+          throw GroongaException(response.returnCode, status, response.message, response.query)
       }
     } finally {
       httpResponse.close()
