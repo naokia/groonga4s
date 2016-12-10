@@ -6,8 +6,6 @@ import com.naokia.groonga4s.util.mapping.CollectionConverter
 import com.naokia.groonga4s.util.request.Query
 
 /**
- * TODO: Don't use Any
- *
  * @param table
  * @param clazz
  * @param query
