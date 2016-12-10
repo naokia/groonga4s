@@ -9,7 +9,7 @@ import scala.reflect.{ClassTag, classTag}
 import scala.reflect.runtime.universe._
 
 trait Client{
-  def select[T: TypeTag: ClassTag](parameters: SelectParameters[T])(implicit ec: ExecutionContext): Future[SelectResponse[T]]
+  def select[T: TypeTag: ClassTag](parameters: SelectParameters[T])(implicit ec: ExecutionContext): Future[SelectResponse]
   def load[T](parameters: LoadParameters[T])(implicit ec: ExecutionContext): Future[LoadResponse]
 }
 
@@ -30,7 +30,12 @@ class GroongaClient(uri: String) extends Client {
   def select[T: TypeTag: ClassTag](parameters: SelectParameters[T])(implicit ec: ExecutionContext) = Future{
     val tt = typeTag[T]
     val ct = classTag[T]
-    requestSender.send[T,SelectResponse[T]](new SelectCommand(parameters), new SelectResponseParser[T])
+    val (entity, requestUri) = requestSender.send(new SelectCommand(parameters))
+    try {
+      new SelectResponse(entity, requestUri)
+    } catch {
+      case e: NullPointerException => throw new ResponseParseException("A Response JSON may be broken, or Version of Groonga is different:" + entity, e)
+    }
   }
 
   /**
@@ -41,6 +46,11 @@ class GroongaClient(uri: String) extends Client {
    * @return
    */
   def load[T](parameters: LoadParameters[T])(implicit ec: ExecutionContext): Future[LoadResponse] = Future{
-    requestSender.sendWithBody(new LoadCommand[T](parameters), new LoadResponseParser)
+    val (entity, requestUri) = requestSender.sendWithBody(new LoadCommand[T](parameters))
+    try {
+      new LoadResponse(entity, requestUri)
+    } catch {
+      case e: NullPointerException => throw new ResponseParseException("A Response JSON may be broken, or Version of Groonga is different:" + entity, e)
+    }
   }
 }
