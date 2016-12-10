@@ -8,7 +8,7 @@ import org.specs2.mutable.Specification
 case class Person(_id: Int, _key: String, age: Int)
 case class Site(_id: Int, _key: String, genre: String, title: String, user: Int)
 
-class SelectResponseParserSpec extends Specification{
+class SelectResponseSpec extends Specification{
 
   "SelectResponseParser" >> {
     "must parse Json with no item" >> {
