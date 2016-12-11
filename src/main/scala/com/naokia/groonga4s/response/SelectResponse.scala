@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.naokia.groonga4s.util.column.JsonNodeConverter
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.naokia.groonga4s.{Entity, RequestUri, ResponseParseException}
+import com.naokia.groonga4s.{Entity, RequestUri}
 import com.naokia.groonga4s.util.mapping.CollectionConverter
 
 import collection.JavaConversions._
 import scala.reflect.runtime.universe._
-import scala.reflect.{ClassTag, classTag}
+import scala.reflect.ClassTag
 
 /**
  * Response when select command is sent.
@@ -30,11 +30,22 @@ class SelectResponse(entity: Entity, val requestUri: RequestUri) extends Respons
   val hits = rootNode.get(1).get(0).get(0).get(0).asInt()
   val drillDowns = if (rootNode.get(1).elements().size > 1) DrillDownParser.parse(rootNode.get(1).get(1)) else Map[String, DrillDownLabeledGroup]()
 
+  /**
+    * Return records as Class T
+    *
+    * @tparam T
+    * @return
+    */
   def as[T: TypeTag: ClassTag]: Seq[T] = {
     val tpe = typeOf[T]
     parse(item => CollectionConverter.map2class[T](item))
   }
 
+  /**
+    * Return records as Map
+    *
+    * @return
+    */
   def asMap: Seq[Map[String, Any]] = {
     parse(item => item)
   }
