@@ -20,7 +20,7 @@ class LoadCommand[T](loadParameters: LoadParameters[T], convert2LowerCase: Boole
    *
    * @return
    */
-  override def getQuery: String = {
+  override def toQuery: String = {
     val sb = new StringBuilder("/d/load?")
     sb.append("table=")
     sb.append(loadParameters.table)

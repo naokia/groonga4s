@@ -9,7 +9,7 @@ class LoadCommandSpec extends Specification{
       val people = List[Person](Person(1, "john"))
       val parameters = LoadParameters[Person]("Entities", classOf[Person], people)
       val command = new LoadCommand(parameters)
-      command.getQuery must equalTo( """/d/load?table=Entities&columns=_key,mail_address""")
+      command.toQuery must equalTo( """/d/load?table=Entities&columns=_key,mail_address""")
     }
 
     "executes load command to Groonga (with ifexists parameter)" >> {
@@ -17,7 +17,7 @@ class LoadCommandSpec extends Specification{
       val people = List[Person](Person(1, "john"))
       val parameters = LoadParameters[Person]("Entities", classOf[Person], people, Some(true))
       val command = new LoadCommand(parameters)
-      command.getQuery must equalTo( """/d/load?table=Entities&columns=_key,mail_address&ifexists=true""")
+      command.toQuery must equalTo( """/d/load?table=Entities&columns=_key,mail_address&ifexists=true""")
     }
 
     "executes load command to Groonga (without changing key names to snake case)" >> {
@@ -25,7 +25,7 @@ class LoadCommandSpec extends Specification{
       val people = List[Person](Person(1, "john"))
       val parameters = LoadParameters[Person]("Entities", classOf[Person], people, Some(true))
       val command = new LoadCommand(parameters, false)
-      command.getQuery must equalTo( """/d/load?table=Entities&columns=_key,mail_address&ifexists=true""")
+      command.toQuery must equalTo( """/d/load?table=Entities&columns=_key,mail_address&ifexists=true""")
     }
 
     "generate data for POST method " >> {

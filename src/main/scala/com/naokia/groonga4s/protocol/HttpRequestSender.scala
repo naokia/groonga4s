@@ -23,7 +23,7 @@ class HttpRequestSender(uri: String) extends RequestSender{
    * @return
    */
   override def send(command: Command): (Entity, RequestUri) ={
-    val requestUri = uri + command.getQuery
+    val requestUri = uri + command.toQuery
     (doSend(new HttpGet(requestUri)), requestUri)
   }
 
@@ -34,7 +34,7 @@ class HttpRequestSender(uri: String) extends RequestSender{
    * @return
    */
   override def sendWithBody(command: CommandWithBody): (Entity, RequestUri) = {
-    val requestUri = uri + command.getQuery
+    val requestUri = uri + command.toQuery
     val httpPost = new HttpPost(requestUri)
     httpPost.setHeader("Content-Type", "application/json; charset=UTF-8")
     httpPost.setEntity(new StringEntity(command.getBody))
