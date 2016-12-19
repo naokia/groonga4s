@@ -1,9 +1,9 @@
-package com.naokia.groonga4s.command
+package com.naokia.groonga4s.request
 
 import java.net.URLEncoder
 import com.naokia.groonga4s.util.request.Query
 
-class SelectParameters private(builder: SelectParameters.Builder) extends Command{
+class SelectRequest private(builder: SelectRequest.Builder) extends Request{
   val table: String = builder.table
   val outputColumns: Seq[String] = builder.outputColumns
   val query: Option[String] = builder.query
@@ -14,7 +14,7 @@ class SelectParameters private(builder: SelectParameters.Builder) extends Comman
   val limit: Option[Int] = builder.limit
   val cache: Option[Boolean] = builder.cache
   val adjuster: Option[String] = builder.adjuster
-  val drillDowns: Seq[DrillDownParameters] = builder.drillDowns
+  val drillDowns: Seq[DrillDown] = builder.drillDowns
   val matchColumns: Seq[String] = builder.matchColumns
   val queryFlags: Option[String] = builder.queryFlags
   val queryExpander: Option[String] = builder.queryExpander
@@ -62,8 +62,8 @@ class SelectParameters private(builder: SelectParameters.Builder) extends Comman
       appendStringSeq("sortby", drillDownParameters.sortby, Some(key))
       appendInt("offset", drillDownParameters.offset, Some(key))
       appendInt("limit", drillDownParameters.limit, Some(key))
-      val outputColumns = if(drillDownParameters.outputColumns.nonEmpty && ! drillDownParameters.outputColumns.contains(SelectParameters.outputColumnKey)){
-        drillDownParameters.outputColumns :+ SelectParameters.outputColumnKey
+      val outputColumns = if(drillDownParameters.outputColumns.nonEmpty && ! drillDownParameters.outputColumns.contains(SelectRequest.outputColumnKey)){
+        drillDownParameters.outputColumns :+ SelectRequest.outputColumnKey
       } else{
         drillDownParameters.outputColumns
       }
@@ -132,24 +132,24 @@ class SelectParameters private(builder: SelectParameters.Builder) extends Comman
   }
 }
 
-object SelectParameters{
+object SelectRequest{
   val outputColumnKey = "_key"
 
   class Builder(val table: String){
-    private[SelectParameters] var outputColumns: Seq[String] = Seq()
-    private[SelectParameters] var query: Option[String] = None
-    private[SelectParameters] var filter: Option[String]=None
-    private[SelectParameters] var scorer: Option[String]=None
-    private[SelectParameters] var sortBy: Seq[String]=Seq()
-    private[SelectParameters] var offset: Option[Int]=None
-    private[SelectParameters] var limit: Option[Int]=None
-    private[SelectParameters] var cache: Option[Boolean]=None
-    private[SelectParameters] var adjuster: Option[String]=None
-    private[SelectParameters] var drillDowns: Seq[DrillDownParameters] = Seq()
-    private[SelectParameters] var matchColumns: Seq[String] = Seq()
-    private[SelectParameters] var queryFlags: Option[String]=None
-    private[SelectParameters] var queryExpander: Option[String]=None
-    private[SelectParameters] var matchEscalationThreshold: Option[Int]=None
+    private[SelectRequest] var outputColumns: Seq[String] = Seq()
+    private[SelectRequest] var query: Option[String] = None
+    private[SelectRequest] var filter: Option[String]=None
+    private[SelectRequest] var scorer: Option[String]=None
+    private[SelectRequest] var sortBy: Seq[String]=Seq()
+    private[SelectRequest] var offset: Option[Int]=None
+    private[SelectRequest] var limit: Option[Int]=None
+    private[SelectRequest] var cache: Option[Boolean]=None
+    private[SelectRequest] var adjuster: Option[String]=None
+    private[SelectRequest] var drillDowns: Seq[DrillDown] = Seq()
+    private[SelectRequest] var matchColumns: Seq[String] = Seq()
+    private[SelectRequest] var queryFlags: Option[String]=None
+    private[SelectRequest] var queryExpander: Option[String]=None
+    private[SelectRequest] var matchEscalationThreshold: Option[Int]=None
 
 
     def withOutputColumns(value: Seq[String]) = {
@@ -188,7 +188,7 @@ object SelectParameters{
       adjuster = Some(value)
       this
     }
-    def withDrillDowns(value: Seq[DrillDownParameters]) = {
+    def withDrillDowns(value: Seq[DrillDown]) = {
       drillDowns = value
       this
     }
@@ -209,13 +209,13 @@ object SelectParameters{
       this
     }
 
-    def build: SelectParameters = {
-      new SelectParameters(this)
+    def build: SelectRequest = {
+      new SelectRequest(this)
     }
   }
 }
 
-case class DrillDownParameters(
+case class DrillDown(
                                 key: String,
                                 sortby: Seq[String]=Seq(),
                                 offset: Option[Int]=None,
@@ -223,5 +223,4 @@ case class DrillDownParameters(
                                 outputColumns : Seq[String] = Seq(),
                                 calcTypes: Seq[String] = Seq(),
                                 calcTarget: Option[String]=None
-                                ) extends Parameters
-
+                                )

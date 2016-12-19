@@ -1,4 +1,4 @@
-package com.naokia.groonga4s.command
+package com.naokia.groonga4s.request
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
@@ -14,7 +14,7 @@ case class LoadParameters[T](table: String, clazz: Class[T], values: Seq[T], ifE
  * @param convert2LowerCase If groonga table adopt snake case naming rule, this value must be true.
  * @tparam T type of case class for generate JSON body.
  */
-class LoadCommand[T](loadParameters: LoadParameters[T], convert2LowerCase: Boolean = true) extends CommandWithBody{
+class LoadCommand[T](loadParameters: LoadParameters[T], convert2LowerCase: Boolean = true) extends RequestWithBody{
   /**
    * Make and return query from LoadParameters.
    *

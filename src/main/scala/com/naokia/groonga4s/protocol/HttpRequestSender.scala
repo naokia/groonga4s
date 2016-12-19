@@ -3,7 +3,7 @@ package com.naokia.groonga4s.protocol
 import java.net.HttpURLConnection
 
 import com.naokia.groonga4s.{Entity, GroongaException, RequestUri}
-import com.naokia.groonga4s.command.{Command, CommandWithBody}
+import com.naokia.groonga4s.request.{Request, RequestWithBody}
 import com.naokia.groonga4s.response.{ErrorResponseParser, Response, ResponseParser}
 import org.apache.http.client.methods.{HttpGet, HttpPost, HttpRequestBase}
 import org.apache.http.entity.StringEntity
@@ -19,25 +19,25 @@ class HttpRequestSender(uri: String) extends RequestSender{
   /**
    * send GET request.
    *
-   * @param command
+   * @param request
    * @return
    */
-  override def send(command: Command): (Entity, RequestUri) ={
-    val requestUri = uri + command.toQuery
+  override def send(request: Request): (Entity, RequestUri) ={
+    val requestUri = uri + request.toQuery
     (doSend(new HttpGet(requestUri)), requestUri)
   }
 
   /**
    * Sends POST request.
    *
-   * @param command
+   * @param request
    * @return
    */
-  override def sendWithBody(command: CommandWithBody): (Entity, RequestUri) = {
-    val requestUri = uri + command.toQuery
+  override def sendWithBody(request: RequestWithBody): (Entity, RequestUri) = {
+    val requestUri = uri + request.toQuery
     val httpPost = new HttpPost(requestUri)
     httpPost.setHeader("Content-Type", "application/json; charset=UTF-8")
-    httpPost.setEntity(new StringEntity(command.getBody))
+    httpPost.setEntity(new StringEntity(request.getBody))
     (doSend(httpPost), requestUri)
   }
 

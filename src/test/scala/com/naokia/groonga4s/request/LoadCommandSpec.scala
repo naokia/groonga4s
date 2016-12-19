@@ -1,4 +1,4 @@
-package com.naokia.groonga4s.command
+package com.naokia.groonga4s.request
 
 import org.specs2.mutable.Specification
 
