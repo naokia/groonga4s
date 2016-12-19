@@ -10,8 +10,8 @@ import scala.reflect.runtime.universe._
 
 
 trait Client{
-  def select[T: TypeTag: ClassTag](parameters: SelectRequest)(implicit ec: ExecutionContext): Future[SelectResponse]
-  def load[T](parameters: LoadParameters[T])(implicit ec: ExecutionContext): Future[LoadResponse]
+  def select[T: TypeTag: ClassTag](request: SelectRequest)(implicit ec: ExecutionContext): Future[SelectResponse]
+  def load[T](request: LoadRequest[T])(implicit ec: ExecutionContext): Future[LoadResponse]
 }
 
 /**
@@ -25,13 +25,13 @@ class GroongaClient(uri: String) extends Client {
   /**
    * Sends select command to groonga.
    *
-   * @param parameters parameter set
+   * @param request parameter set
    * @return
    */
-  def select[T: TypeTag: ClassTag](parameters: SelectRequest)(implicit ec: ExecutionContext) = Future{
+  def select[T: TypeTag: ClassTag](request: SelectRequest)(implicit ec: ExecutionContext) = Future{
     val tt = typeTag[T]
     val ct = classTag[T]
-    val (entity, requestUri) = requestSender.send(parameters)
+    val (entity, requestUri) = requestSender.send(request)
     try {
       new SelectResponse(entity, requestUri)
     } catch {
@@ -42,12 +42,12 @@ class GroongaClient(uri: String) extends Client {
   /**
    * Sends load command to groonga.
    *
-   * @param parameters
+   * @param request
    * @tparam T
    * @return
    */
-  def load[T](parameters: LoadParameters[T])(implicit ec: ExecutionContext): Future[LoadResponse] = Future{
-    val (entity, requestUri) = requestSender.sendWithBody(new LoadCommand[T](parameters))
+  def load[T](request: LoadRequest[T])(implicit ec: ExecutionContext): Future[LoadResponse] = Future{
+    val (entity, requestUri) = requestSender.sendWithBody(request)
     try {
       new LoadResponse(entity, requestUri)
     } catch {
