@@ -32,7 +32,7 @@ val client = new GroongaClient("http://localhost:10041")
 case class Site(_key: String, genre: String, title: String)
 
 val request = new SelectRequest.Builder("Site")
-  .withOutputColumns(Seq("_key", "genre", "title", "user"))
+  .withOutputColumns(Seq("_key", "genre", "title"))
   .withFilter("""genre=="sns"""")
   .build
 client.select(request).onComplete {
@@ -46,7 +46,7 @@ client.select(request).onComplete {
 ``` scala
 val drillDown = DrillDown("genre")
 val request = new SelectRequest.Builder("Site")
-  .withOutputColumns(Seq("_key", "genre", "title", "user"))
+  .withOutputColumns(Seq("_key", "genre", "title"))
   .withDrillDowns(Seq(drillDown))
   .build
 client.select(request).onComplete {
