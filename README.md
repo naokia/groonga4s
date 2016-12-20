@@ -10,7 +10,7 @@
 Add a following dependency into your build.sbt at first.
 
 ``` scala
-libraryDependencies += "com.naokia" %% "groonga4s" % "0.6.1"
+libraryDependencies += "com.naokia" %% "groonga4s" % "0.7.0"
 
 resolvers += "naokia github repository (snapshots)" at "http://naokia.github.io/repositories/snapshots"
 ```
@@ -28,39 +28,39 @@ val client = new GroongaClient("http://localhost:10041")
 #### with filter
 
 ``` scala
-// select from "Person" table
-case class Person(_key: String, city: String, profile: String, hobby: String)
+// select from "Site" table
+case class Site(_key: String, genre: String, title: String)
 
-val res = client.select(SelectParameters("Person", classOf[Person], filter = Some( """_key=="alice""""))).recover({
-  case e:GroongaException => throw e
-}).get
-res.items map { item => // Person
-  item._key // alice
+val request = new SelectRequest.Builder("Site")
+  .withOutputColumns(Seq("_key", "genre", "title", "user"))
+  .withFilter("""genre=="sns"""")
+  .build
+client.select(request).onComplete {
+  case Success(result) => for (site <- result.as[Site]) println(site)
+  case Failure(t) => println("Error: " + t.getMessage)
 }
 ```
-#### with query
+
+#### output drill downs
 
 ``` scala
-val query = QueryParameters("golf", Seq("profile", "hobby"))  // query= golf , match_columns=profile,hobby
-val res = client.select(SelectParameters("Person", classOf[Person], query = Some(query)))
-```
-
-#### output drilldowns
-
-``` scala
-val drillDownParameters = DrillDownParameters("city")
-
-val res = client.select(SelectParameters("Person", classOf[Person], drillDowns = Seq(drillDownParameters))).recover({
-  case e:GroongaException => throw e
-}).get
-val populationOfTokyo = res.drillDownGroups("city")("tokyo").nsubrecs // Some(13350000)
-))
+val drillDown = DrillDown("genre")
+val request = new SelectRequest.Builder("Site")
+  .withOutputColumns(Seq("_key", "genre", "title", "user"))
+  .withDrillDowns(Seq(drillDown))
+  .build
+client.select(request).onComplete {
+  case Success(result) => println(result.drillDowns("genre")("sns").nsubrecs)
+  case Failure(t) => println("Error: " + t.getMessage)
+}
 ```
 
 ### Load command
 
 ``` scala
-case class Person(_key: String, mailAddress: String)
-val people = List(Person("taro", "taro@example.com"))
-client.load(LoadParameters("Person", classOf[Person], people))
+val site = Site("http://example.com", "sns", "example site")
+client.load(new LoadRequest("Site", classOf[Site], List(site))).onComplete{
+  case Success(result) => println(result.affected)
+  case Failure(t) => println("Error: " + t.getMessage)
+}
 ```
