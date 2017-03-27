@@ -167,5 +167,20 @@ class SelectRequestSpec extends Specification{
          .build
        request.toQuery must equalTo("/d/select.json?table=Entries&output_columns=_id%2C_key%2C_score&drilldown%5Bgenre%5D.keys=genre&drilldown%5Bgenre%5D.calc_target=n_likes")
      }
+     "with option" >> {
+       val request = new SelectRequest.Builder("Entries")
+           .withOutputColumns(Seq("_id", "_key", "_score"))
+           .withOption("key1", "value1")
+           .build
+       request.toQuery must equalTo("/d/select.json?table=Entries&output_columns=_id%2C_key%2C_score&key1=value1")
+     }
+     "with multiple option" >> {
+       val request = new SelectRequest.Builder("Entries")
+           .withOutputColumns(Seq("_id", "_key", "_score"))
+           .withOption("key1", "value1")
+           .withOption("key2", "value2")
+           .build
+       request.toQuery must equalTo("/d/select.json?table=Entries&output_columns=_id%2C_key%2C_score&key1=value1&key2=value2")
+     }
    }
  }

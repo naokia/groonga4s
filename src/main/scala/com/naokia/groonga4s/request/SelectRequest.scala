@@ -19,6 +19,7 @@ class SelectRequest private(builder: SelectRequest.Builder) extends Request{
   val queryFlags: Option[String] = builder.queryFlags
   val queryExpander: Option[String] = builder.queryExpander
   val matchEscalationThreshold: Option[Int] = builder.matchEscalationThreshold
+  val option: Map[String, Option[String]] = builder.option
 
   private val sb = new StringBuilder("/d/select.json?table=")
   sb.append(table)
@@ -44,6 +45,10 @@ class SelectRequest private(builder: SelectRequest.Builder) extends Request{
     appendEncodedString("query_flags", queryFlags)
     appendEncodedString("query_expander", queryExpander)
 
+    option.foreach {kv =>
+      val (k, v) = kv
+      appendEncodedString(k, v)
+    }
 
     appendDrillDownParameters()
 
@@ -150,6 +155,7 @@ object SelectRequest{
     private[SelectRequest] var queryFlags: Option[String]=None
     private[SelectRequest] var queryExpander: Option[String]=None
     private[SelectRequest] var matchEscalationThreshold: Option[Int]=None
+    private[SelectRequest] var option: Map[String, Option[String]] = Map()
 
 
     def withOutputColumns(value: Seq[String]) = {
@@ -206,6 +212,10 @@ object SelectRequest{
     }
     def withMatchEscalationThreshold(value: Int) = {
       matchEscalationThreshold = Some(value)
+      this
+    }
+    def withOption(key: String, value: String) = {
+      option = option + (key -> Some(value))
       this
     }
 
