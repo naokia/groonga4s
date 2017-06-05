@@ -10,7 +10,7 @@
 Add a following dependency into your build.sbt at first.
 
 ``` scala
-libraryDependencies += "com.naokia" %% "groonga4s" % "0.7.0"
+libraryDependencies += "com.naokia" %% "groonga4s" % "0.8.0"
 
 resolvers += "naokia github repository (snapshots)" at "http://naokia.github.io/repositories/snapshots"
 ```
