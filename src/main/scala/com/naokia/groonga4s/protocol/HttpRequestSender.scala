@@ -24,7 +24,12 @@ class HttpRequestSender(uri: String) extends RequestSender{
    */
   override def send(request: Request): (Entity, RequestUri) ={
     val requestUri = uri + request.toQuery
-    (doSend(new HttpGet(requestUri)), requestUri)
+    val httpGet = new HttpGet(requestUri)
+    try {
+      (doSend(httpGet), requestUri)
+    } finally {
+      httpGet.releaseConnection()
+    }
   }
 
   /**
@@ -36,9 +41,13 @@ class HttpRequestSender(uri: String) extends RequestSender{
   override def sendWithBody(request: RequestWithBody): (Entity, RequestUri) = {
     val requestUri = uri + request.toQuery
     val httpPost = new HttpPost(requestUri)
-    httpPost.setHeader("Content-Type", "application/json; charset=UTF-8")
-    httpPost.setEntity(new StringEntity(request.getBody))
-    (doSend(httpPost), requestUri)
+    try {
+      httpPost.setHeader("Content-Type", "application/json; charset=UTF-8")
+      httpPost.setEntity(new StringEntity(request.getBody))
+      (doSend(httpPost), requestUri)
+    } finally {
+      httpPost.releaseConnection()
+    }
   }
 
   /**
@@ -51,17 +60,12 @@ class HttpRequestSender(uri: String) extends RequestSender{
     val httpClient = HttpClientBuilder.create().build()
     val uri = httpMethod.getURI.toString
     val httpResponse = httpClient.execute(httpMethod)
-    try {
-      val entity = EntityUtils.toString(httpResponse.getEntity, "UTF-8")
-      httpResponse.getStatusLine.getStatusCode match {
-        case status if status == HttpURLConnection.HTTP_OK => entity
-        case status if status != HttpURLConnection.HTTP_OK =>
-          val response = new ErrorResponseParser().parse(entity, uri)
-          throw GroongaException(response.returnCode, status, response.message, response.query)
-      }
-    } finally {
-      httpResponse.close()
-      httpClient.close()
+    val entity = EntityUtils.toString(httpResponse.getEntity, "UTF-8")
+    httpResponse.getStatusLine.getStatusCode match {
+      case status if status == HttpURLConnection.HTTP_OK => entity
+      case status if status != HttpURLConnection.HTTP_OK =>
+        val response = new ErrorResponseParser().parse(entity, uri)
+        throw GroongaException(response.returnCode, status, response.message, response.query)
     }
   }
 }
